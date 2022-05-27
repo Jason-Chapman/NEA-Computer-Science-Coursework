@@ -1,14 +1,12 @@
 package com.company;
 
+import com.sun.applet2.preloader.event.ApplicationExitEvent;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.swing.*;
+import javax.swing.plaf.FontUIResource;
 
 public class Main implements ActionListener {
 
@@ -29,10 +27,10 @@ public class Main implements ActionListener {
         panel.setLayout(null);
         frame.setVisible(true);
 
-        loginGUI();
+        login();
     }
 
-    public static void loginGUI() {
+    public static void login() {
         JLabel usernameLabel;
         JLabel passwordLabel;
         JButton button;
@@ -72,6 +70,8 @@ public class Main implements ActionListener {
         JButton ViewRentals;
         JButton EditRentals;
         JButton DeleteRental;
+        JButton Quit;
+        JButton FontEdit;
 
         JLabel welcomeLabel;
         welcomeLabel = new JLabel("Welcome to the Rental System!");
@@ -98,6 +98,16 @@ public class Main implements ActionListener {
         DeleteRental.addActionListener(new Main());
         panel.add(DeleteRental);
 
+        Quit = new JButton("Quit");
+        Quit.setBounds((width/2) - 100, (height/2) + 50, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        Quit.addActionListener(new Main());
+        panel.add(Quit);
+
+        FontEdit = new JButton("Font Settings");
+        FontEdit.setBounds(0, 0, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        FontEdit.addActionListener(new Main());
+        panel.add(FontEdit);
+
         panel.update(panel.getGraphics());
     }
 
@@ -112,9 +122,15 @@ public class Main implements ActionListener {
         panel.add(welcomeLabel);
 
         ReturnToMenu = new JButton("Return to Main Menu");
-        ReturnToMenu.setBounds(0, 0, 250, 75); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        ReturnToMenu.setBounds((width/2) - 100, (height/2) - 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         ReturnToMenu.addActionListener(new Main());
         panel.add(ReturnToMenu);
+
+        JButton FontEdit;
+        FontEdit = new JButton("Font Settings");
+        FontEdit.setBounds(0, 0, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        FontEdit.addActionListener(new Main());
+        panel.add(FontEdit);
 
         panel.update(panel.getGraphics());
     }
@@ -130,9 +146,15 @@ public class Main implements ActionListener {
         panel.add(welcomeLabel);
 
         ReturnToMenu = new JButton("Return to Main Menu");
-        ReturnToMenu.setBounds(0, 0, 250, 75); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        ReturnToMenu.setBounds((width/2) - 100, (height/2) - 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         ReturnToMenu.addActionListener(new Main());
         panel.add(ReturnToMenu);
+
+        JButton FontEdit;
+        FontEdit = new JButton("Font Settings");
+        FontEdit.setBounds(0, 0, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        FontEdit.addActionListener(new Main());
+        panel.add(FontEdit);
 
         panel.update(panel.getGraphics());
     }
@@ -148,9 +170,15 @@ public class Main implements ActionListener {
         panel.add(welcomeLabel);
 
         ReturnToMenu = new JButton("Return to Main Menu");
-        ReturnToMenu.setBounds(0, 0, 250, 75); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        ReturnToMenu.setBounds((width/2) - 100, (height/2) - 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         ReturnToMenu.addActionListener(new Main());
         panel.add(ReturnToMenu);
+
+        JButton FontEdit;
+        FontEdit = new JButton("Font Settings");
+        FontEdit.setBounds(0, 0, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        FontEdit.addActionListener(new Main());
+        panel.add(FontEdit);
 
         panel.update(panel.getGraphics());
     }
@@ -166,16 +194,34 @@ public class Main implements ActionListener {
         panel.add(welcomeLabel);
 
         ReturnToMenu = new JButton("Return to Main Menu");
-        ReturnToMenu.setBounds(0, 0, 250, 75); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        ReturnToMenu.setBounds((width/2) - 100, (height/2) - 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         ReturnToMenu.addActionListener(new Main());
         panel.add(ReturnToMenu);
+
+        JButton FontEdit;
+        FontEdit = new JButton("Font Settings");
+        FontEdit.setBounds(0, 0, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        FontEdit.addActionListener(new Main());
+        panel.add(FontEdit);
 
         panel.update(panel.getGraphics());
     }
 
+    public void FontEdit() {
+        panel.removeAll();
+
+        JTextField FontInput;
+
+        FontInput = new JTextField(20);
+        FontInput.setBounds((width/2) - 100, (height/2) - 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(FontInput);
+
+        UIManager.put("Label.font", new FontUIResource(FontInput.getText(), Font.PLAIN, 50));
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        if (((actionEvent.toString()).contains("cmd=Login")) == true) {
+        if ((actionEvent.toString()).contains("cmd=Login")) {
             String username = (usernameText.getText()).toLowerCase(); //REMOVES CAPS SENSITIVITY FROM USERNAME
             String password = passwordText.getText();
             if (username.equals("username") && password.equals("Password")) { //REPLACE "username" & "Password" WITH VARIABLES FROM DATABASE IN FUTURE
@@ -185,20 +231,26 @@ public class Main implements ActionListener {
                 success.setText("Username or Password is incorrect.");
             }
         }
-        else if (((actionEvent.toString()).contains("cmd=New Rental")) == true) {
+        else if ((actionEvent.toString()).contains("cmd=New Rental")) {
             newRental();
         }
-        else if (((actionEvent.toString()).contains("cmd=View Rentals")) == true) {
+        else if ((actionEvent.toString()).contains("cmd=View Rentals")) {
             viewRentals();
         }
-        else if (((actionEvent.toString()).contains("cmd=Edit Rentals")) == true) {
+        else if ((actionEvent.toString()).contains("cmd=Edit Rentals")) {
             editRentals();
         }
-        else if (((actionEvent.toString()).contains("cmd=Delete Rental")) == true) {
+        else if ((actionEvent.toString()).contains("cmd=Delete Rental")) {
             deleteRental();
         }
-        else if (((actionEvent.toString()).contains("cmd=Return to Main Menu")) == true) {
+        else if ((actionEvent.toString()).contains("cmd=Return to Main Menu")) {
             mainMenu();
+        }
+        else if ((actionEvent.toString()).contains("cmd=Quit")) {
+            frame.dispose();
+        }
+        else if ((actionEvent.toString()).contains("cmd=Font Settings")) {
+            FontEdit();
         }
     }
 }
