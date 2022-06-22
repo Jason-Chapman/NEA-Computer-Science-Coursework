@@ -84,10 +84,8 @@ public class Main implements ActionListener {
         panel.removeAll();
 
         JButton NewRental;
-        JButton ViewRentals;
         JButton EditRentals;
         JButton DeleteRental;
-        JButton Quit;
         JButton FontEdit;
 
         JLabel welcomeLabel;
@@ -110,11 +108,6 @@ public class Main implements ActionListener {
         DeleteRental.addActionListener(new Main());
         panel.add(DeleteRental);
 
-        Quit = new JButton("Quit");
-        Quit.setBounds((width/2) - 100, (height/2) + 50, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        Quit.addActionListener(new Main());
-        panel.add(Quit);
-
         FontEdit = new JButton("Settings (Esc)");
         FontEdit.setBounds((width/4)*3, 0, width/4, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
         FontEdit.addActionListener(new Main());
@@ -128,22 +121,6 @@ public class Main implements ActionListener {
 
         JLabel welcomeLabel;
         welcomeLabel = new JLabel("Welcome to the Renting Section!", SwingConstants.CENTER);
-        welcomeLabel.setBounds(0, (height/2) - 200, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        panel.add(welcomeLabel);
-
-        ReturnToMenu = new JButton("Return to Main Menu");
-        ReturnToMenu.setBounds((width/2) - 100, (height/2) - 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        ReturnToMenu.addActionListener(new Main());
-        panel.add(ReturnToMenu);
-
-        panel.update(panel.getGraphics());
-    }
-
-    public static void viewRentals() {
-        panel.removeAll();
-
-        JLabel welcomeLabel;
-        welcomeLabel = new JLabel("Welcome to the Viewing Section!", SwingConstants.CENTER);
         welcomeLabel.setBounds(0, (height/2) - 200, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(welcomeLabel);
 
@@ -298,9 +275,6 @@ public class Main implements ActionListener {
         }
         else if ((actionEvent.toString()).contains("cmd=New Rental")) {
             newRental();
-        }
-        else if ((actionEvent.toString()).contains("cmd=View Rentals")) {
-            viewRentals();
         }
         else if ((actionEvent.toString()).contains("cmd=Edit Rentals")) {
             editRentals();
