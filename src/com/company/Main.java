@@ -24,6 +24,7 @@ public class Main implements ActionListener {
     public static JButton SERIF;
     public static JButton MONOSPACED;
     public static JSlider fontSize;
+    public static JTextField textfieldExample;
 
     public static Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
     public static int width = resolution.width;
@@ -94,23 +95,18 @@ public class Main implements ActionListener {
         welcomeLabel.setBounds(0, (height/2) - 200, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(welcomeLabel);
 
-        NewRental = new JButton("New Rental");
-        NewRental.setBounds((width/2) - 100, (height/2) - 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        NewRental = new JButton("New Rental (N)");
+        NewRental.setBounds(0, 0, width/4, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
         NewRental.addActionListener(new Main());
         panel.add(NewRental);
 
-        ViewRentals = new JButton("View Rentals");
-        ViewRentals.setBounds((width/2) - 100, (height/2) - 100, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        ViewRentals.addActionListener(new Main());
-        panel.add(ViewRentals);
-
-        EditRentals = new JButton("Edit Rentals");
-        EditRentals.setBounds((width/2) - 100, (height/2) - 50, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        EditRentals = new JButton("Edit Rentals (E)");
+        EditRentals.setBounds(width/4, 0, width/4, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
         EditRentals.addActionListener(new Main());
         panel.add(EditRentals);
 
-        DeleteRental = new JButton("Delete Rental");
-        DeleteRental.setBounds((width/2) - 100, (height/2), 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        DeleteRental = new JButton("Delete Rental (Del)");
+        DeleteRental.setBounds(width/2, 0, width/4, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
         DeleteRental.addActionListener(new Main());
         panel.add(DeleteRental);
 
@@ -119,8 +115,8 @@ public class Main implements ActionListener {
         Quit.addActionListener(new Main());
         panel.add(Quit);
 
-        FontEdit = new JButton("Font Settings");
-        FontEdit.setBounds(0, 0, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        FontEdit = new JButton("Settings (Esc)");
+        FontEdit.setBounds((width/4)*3, 0, width/4, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
         FontEdit.addActionListener(new Main());
         panel.add(FontEdit);
 
@@ -140,12 +136,6 @@ public class Main implements ActionListener {
         ReturnToMenu.addActionListener(new Main());
         panel.add(ReturnToMenu);
 
-        JButton FontEdit;
-        FontEdit = new JButton("Font Settings");
-        FontEdit.setBounds(0, 0, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        FontEdit.addActionListener(new Main());
-        panel.add(FontEdit);
-
         panel.update(panel.getGraphics());
     }
 
@@ -161,12 +151,6 @@ public class Main implements ActionListener {
         ReturnToMenu.setBounds((width/2) - 100, (height/2) - 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         ReturnToMenu.addActionListener(new Main());
         panel.add(ReturnToMenu);
-
-        JButton FontEdit;
-        FontEdit = new JButton("Font Settings");
-        FontEdit.setBounds(0, 0, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        FontEdit.addActionListener(new Main());
-        panel.add(FontEdit);
 
         panel.update(panel.getGraphics());
     }
@@ -184,12 +168,6 @@ public class Main implements ActionListener {
         ReturnToMenu.addActionListener(new Main());
         panel.add(ReturnToMenu);
 
-        JButton FontEdit;
-        FontEdit = new JButton("Font Settings");
-        FontEdit.setBounds(0, 0, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        FontEdit.addActionListener(new Main());
-        panel.add(FontEdit);
-
         panel.update(panel.getGraphics());
     }
 
@@ -205,12 +183,6 @@ public class Main implements ActionListener {
         ReturnToMenu.setBounds((width/2) - 100, (height/2) - 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         ReturnToMenu.addActionListener(new Main());
         panel.add(ReturnToMenu);
-
-        JButton FontEdit;
-        FontEdit = new JButton("Font Settings");
-        FontEdit.setBounds(0, 0, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        FontEdit.addActionListener(new Main());
-        panel.add(FontEdit);
 
         panel.update(panel.getGraphics());
     }
@@ -278,6 +250,10 @@ public class Main implements ActionListener {
         SelectSize.setBounds(0, (height/2) - 50, width, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(SelectSize);
 
+        textfieldExample = new JTextField(20);
+        textfieldExample.setBounds((width/2) - 100, (height/2) + 200, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(textfieldExample);
+
         fontSize = new JSlider(JSlider.HORIZONTAL, 8, 16, 12);
         fontSize.setMinorTickSpacing(1);
         fontSize.setMajorTickSpacing(2);
@@ -338,7 +314,7 @@ public class Main implements ActionListener {
         else if ((actionEvent.toString()).contains("cmd=Quit")) {
             frame.dispose();
         }
-        else if ((actionEvent.toString()).contains("cmd=Font Settings")) {
+        else if ((actionEvent.toString()).contains("cmd=Settings (Esc)")) {
             FontEdit();
         }
 
@@ -350,6 +326,7 @@ public class Main implements ActionListener {
             SANS_SERIF.setEnabled(true);
             SERIF.setEnabled(true);
             MONOSPACED.setEnabled(true);
+            fontSize.setEnabled(true);
             fontSize.setValue(labels.getFontSize());
             if (labels.getFont() == "SANS_SERIF") {
                 SANS_SERIF.setEnabled((false));
@@ -367,6 +344,7 @@ public class Main implements ActionListener {
             SANS_SERIF.setEnabled(true);
             SERIF.setEnabled(true);
             MONOSPACED.setEnabled(true);
+            fontSize.setEnabled(true);
             fontSize.setValue(buttons.getFontSize());
             if (buttons.getFont() == "SANS_SERIF") {
                 SANS_SERIF.setEnabled((false));
@@ -383,7 +361,8 @@ public class Main implements ActionListener {
             Buttons.setEnabled(true);
             SANS_SERIF.setEnabled(true);
             SERIF.setEnabled(true);
-            MONOSPACED.setEnabled(true);
+            MONOSPACED.setEnabled(false);
+            fontSize.setEnabled(false);
             fontSize.setValue(textfields.getFontSize());
             if (textfields.getFont() == "SANS_SERIF") {
                 SANS_SERIF.setEnabled((false));
@@ -404,6 +383,7 @@ public class Main implements ActionListener {
                 buttons.setFont("SANS_SERIF");
             }
             else if (Type == "TextField") {
+                MONOSPACED.setEnabled(false);
                 textfields.setFont("SANS_SERIF");
             }
         }
@@ -417,6 +397,7 @@ public class Main implements ActionListener {
                 buttons.setFont("SERIF");
             }
             else if (Type == "TextField") {
+                MONOSPACED.setEnabled(false);
                 textfields.setFont("SERIF");
             }
         }
