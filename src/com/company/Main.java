@@ -1,12 +1,13 @@
 package com.company;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.FontUIResource;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.*;
 
 public class Main implements ActionListener {
 
@@ -36,6 +37,30 @@ public class Main implements ActionListener {
     public static ComponentFontSettings textfields = new ComponentFontSettings("SANS_SERIF", 12);
 
     public static void main(String[] args) {
+
+        String ConnectionURL = "jdbc:sqlserver://movierentalserver.database.windows.net:1433;database=movieRentalDatabase;user=jc210762@movierentalserver;password={Cooper27};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+
+        ResultSet resultSet = null;
+
+        // Open a connection
+        try(Connection conn = DriverManager.getConnection(ConnectionURL);
+            Statement stmt = conn.createStatement();
+        )
+        {
+            String sql = "CREATE TABLE REGISTRATION " +
+                    "(id INTEGER not NULL, " +
+                    " first VARCHAR(255), " +
+                    " last VARCHAR(255), " +
+                    " age INTEGER, " +
+                    " PRIMARY KEY ( id ))";
+
+            stmt.executeUpdate(sql);
+            System.out.println("Created table in given database...");
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         frame.setSize(width, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
