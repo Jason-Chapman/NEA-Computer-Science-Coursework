@@ -27,6 +27,9 @@ public class Main implements ActionListener {
     public static JSlider fontSize;
     public static JTextField textfieldExample;
 
+    public static String Username;
+    public static String Password;
+
     public static Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
     public static int width = resolution.width;
     public static int height = resolution.height;
@@ -40,22 +43,19 @@ public class Main implements ActionListener {
 
         String ConnectionURL = "jdbc:sqlserver://movierentalserver.database.windows.net:1433;database=movieRentalDatabase;user=jc210762@movierentalserver;password={Cooper27};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
 
-        ResultSet resultSet = null;
-
-        // Open a connection
         try(Connection conn = DriverManager.getConnection(ConnectionURL);
             Statement stmt = conn.createStatement();
         )
         {
-            String sql = "CREATE TABLE REGISTRATION " +
-                    "(id INTEGER not NULL, " +
-                    " first VARCHAR(255), " +
-                    " last VARCHAR(255), " +
-                    " age INTEGER, " +
-                    " PRIMARY KEY ( id ))";
+            ResultSet resultSet = stmt.executeQuery("SELECT Username, Password FROM [dbo].[tblEmployees]");
 
-            stmt.executeUpdate(sql);
-            System.out.println("Created table in given database...");
+            while (resultSet.next()) {
+                Username = resultSet.getString(1);
+                Password = resultSet.getString(2);
+                System.out.println("Username: "+ Username +"\nPassword: " + Password);
+            }
+
+            resultSet.close();
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -68,8 +68,7 @@ public class Main implements ActionListener {
         panel.setLayout(null);
         frame.setVisible(true);
 
-//        login();
-        mainMenu();
+        login();
     }
 
     public static void login() {
@@ -291,7 +290,7 @@ public class Main implements ActionListener {
         if ((actionEvent.toString()).contains("cmd=Login")) {
             String username = (usernameText.getText()).toLowerCase(); //REMOVES CAPS SENSITIVITY FROM USERNAME
             String password = passwordText.getText();
-            if (username.equals("username") && password.equals("Password")) { //REPLACE "username" & "Password" WITH VARIABLES FROM DATABASE IN FUTURE
+            if (username.equals(Username) && password.equals(Password)) {
                 mainMenu();
             }
             else {
