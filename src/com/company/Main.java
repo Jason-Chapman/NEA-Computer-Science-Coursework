@@ -59,19 +59,41 @@ public class Main implements ActionListener {
                 Password = rs.getString(2);
                 AccessLevel = rs.getInt(3);
             }
-            int RentalID = 999;
-            int CustomerID;
-            int MovieID;
-            for (int i = 1; i < 51; i++) {
-                RentalID++;
-                CustomerID = random.nextInt(1049-1000)+1000;
-                MovieID = random.nextInt(1049-1001)+1001;
-                LocalDate dateRented = LocalDate.of(2022, random.nextInt(12-1)+1, random.nextInt(31-1)+1);
-                LocalDate dateDue = LocalDate.of(2022, random.nextInt(12-1)+1, random.nextInt(31-1)+1);
-                stmt.execute("INSERT INTO [dbo].[Rentals] VALUES ("+RentalID+", "+CustomerID+", "+MovieID+", '2022-"+dateRented.getMonthValue()+"-"+dateRented.getDayOfMonth()+"', '2022-"+dateDue.getMonthValue()+"-"+dateDue.getDayOfMonth()+"')");
-            }
+
+//            GENERATES RECORDS FOR RENTAL TABLE IN DATABASE
+//======================================================================================================================================================================================
+//            int RentalID = 999;
+//            int CustomerID, MovieID;
+//            int Yrented, Mrented, Drented, Ydue, Mdue, Ddue;
+//            for (int i = 1; i < 51; i++) {
+//                Yrented = random.nextInt(2)+2022;
+//                Mrented = random.nextInt(12-1)+1;
+//                Drented = random.nextInt(28-1)+1;
+//                Ydue = random.nextInt(2)+2022;
+//                Mdue = random.nextInt(12-1)+1;
+//                Ddue = random.nextInt(28-1)+1;
+//                while (Ydue < Yrented) {
+//                    Yrented = random.nextInt(2023-2022)+2022;
+//                    Ydue = random.nextInt(2023-2022)+2022;
+//                }
+//                while (Ydue == Yrented && Mdue < Mrented) {
+//                    Mrented = random.nextInt(12-1)+1;
+//                    Mdue = random.nextInt(12-1)+1;
+//                }
+//                while (Ydue == Yrented && Mdue == Mrented && Ddue < Drented) {
+//                    Drented = random.nextInt(28-1)+1;
+//                    Ddue = random.nextInt(28-1)+1;
+//                }
+//
+//                RentalID++;
+//                CustomerID = random.nextInt(1049-1000)+1000;
+//                MovieID = random.nextInt(1049-1001)+1001;
+//                stmt.execute("INSERT INTO [dbo].[Rentals] VALUES ("+RentalID+", "+CustomerID+", "+MovieID+", '"+Yrented+"-"+Mrented+"-"+Drented+"', '"+Ydue+"-"+Mdue+"-"+Ddue+"')");
+//            }
+//======================================================================================================================================================================================
 
 //            GENERATES RECORDS FOR CUSTOMER TABLE IN DATABASE
+//==========================================================================================================================================================
 //            String PhoneNumber;
 //            int CustomerID = 999;
 //            String Name;
@@ -81,6 +103,8 @@ public class Main implements ActionListener {
 //                Name = "CustomerName"+i+"".toString();
 //                stmt.execute("INSERT INTO [dbo].[tblCustomers] VALUES ("+CustomerID+", '"+Name+"', '"+PhoneNumber+"')");
 //            }
+//==========================================================================================================================================================
+
         }
         catch (SQLException e) {
             e.printStackTrace();
