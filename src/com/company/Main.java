@@ -44,7 +44,6 @@ public class Main implements ActionListener {
     public static int AccessLevel;
 
     public static void main(String[] args) {
-
         String ConnectionURL = "jdbc:sqlserver://movierentalserver.database.windows.net:1433;database=movieRentalDatabase;user=jc210762@movierentalserver;password={Cooper27};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
         ResultSet rs;
 
@@ -59,6 +58,7 @@ public class Main implements ActionListener {
                 Password = rs.getString(2);
                 AccessLevel = rs.getInt(3);
             }
+
 
 //            GENERATES RECORDS FOR RENTAL TABLE IN DATABASE
 //======================================================================================================================================================================================
@@ -91,6 +91,7 @@ public class Main implements ActionListener {
 //                stmt.execute("INSERT INTO [dbo].[Rentals] VALUES ("+RentalID+", "+CustomerID+", "+MovieID+", '"+Yrented+"-"+Mrented+"-"+Drented+"', '"+Ydue+"-"+Mdue+"-"+Ddue+"')");
 //            }
 //======================================================================================================================================================================================
+
 
 //            GENERATES RECORDS FOR CUSTOMER TABLE IN DATABASE
 //==========================================================================================================================================================
