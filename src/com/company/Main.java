@@ -8,11 +8,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.time.LocalDate;
+import java.util.Random;
 
 public class Main implements ActionListener {
 
     public static JPanel panel = new JPanel();
     public static JFrame frame = new JFrame();
+    public static Random random = new Random();
 
     public static JTextField usernameText;
     public static JPasswordField passwordText;
@@ -43,15 +46,12 @@ public class Main implements ActionListener {
     public static void main(String[] args) {
 
         String ConnectionURL = "jdbc:sqlserver://movierentalserver.database.windows.net:1433;database=movieRentalDatabase;user=jc210762@movierentalserver;password={Cooper27};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
-
         ResultSet rs;
 
         // Open a connection
         try(Connection conn = DriverManager.getConnection(ConnectionURL);
             Statement stmt = conn.createStatement();
-        )
-        {
-            String sql = "SELECT Username, Password, AccessLevel FROM [dbo].[tblEmployees]";
+        ) {
             rs = stmt.executeQuery("SELECT Username, Password, AccessLevel FROM [dbo].[tblEmployees]");
 
             while (rs.next()) {
@@ -59,6 +59,28 @@ public class Main implements ActionListener {
                 Password = rs.getString(2);
                 AccessLevel = rs.getInt(3);
             }
+            int RentalID = 999;
+            int CustomerID;
+            int MovieID;
+            for (int i = 1; i < 51; i++) {
+                RentalID++;
+                CustomerID = random.nextInt(1049-1000)+1000;
+                MovieID = random.nextInt(1049-1001)+1001;
+                LocalDate dateRented = LocalDate.of(2022, random.nextInt(12-1)+1, random.nextInt(31-1)+1);
+                LocalDate dateDue = LocalDate.of(2022, random.nextInt(12-1)+1, random.nextInt(31-1)+1);
+                stmt.execute("INSERT INTO [dbo].[Rentals] VALUES ("+RentalID+", "+CustomerID+", "+MovieID+", '2022-"+dateRented.getMonthValue()+"-"+dateRented.getDayOfMonth()+"', '2022-"+dateDue.getMonthValue()+"-"+dateDue.getDayOfMonth()+"')");
+            }
+
+//            GENERATES RECORDS FOR CUSTOMER TABLE IN DATABASE
+//            String PhoneNumber;
+//            int CustomerID = 999;
+//            String Name;
+//            for (int i = 1; i < 51; i++) {
+//                PhoneNumber = ""+Integer.toString(random.nextInt(99999 - 10000)+10000)+" "+Integer.toString(random.nextInt(999999 - 100000)+100000)+"";
+//                CustomerID++;
+//                Name = "CustomerName"+i+"".toString();
+//                stmt.execute("INSERT INTO [dbo].[tblCustomers] VALUES ("+CustomerID+", '"+Name+"', '"+PhoneNumber+"')");
+//            }
         }
         catch (SQLException e) {
             e.printStackTrace();
