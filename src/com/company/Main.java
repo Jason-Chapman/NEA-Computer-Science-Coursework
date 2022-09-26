@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Main implements ActionListener {
@@ -29,6 +30,9 @@ public class Main implements ActionListener {
     public static JButton MONOSPACED;
     public static JSlider fontSize;
     public static JTextField textfieldExample;
+    public static JTable Display;
+    public static ArrayList<Rentals> RentalList =  new ArrayList<Rentals>();
+    public static ArrayList<String> Columns = new ArrayList<String>();
 
     public static Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
     public static int width = resolution.width;
@@ -59,6 +63,21 @@ public class Main implements ActionListener {
                 AccessLevel = rs.getInt(3);
             }
 
+            rs = stmt.executeQuery("SELECT * FROM [dbo].[Rentals]");
+            while (rs.next()) {
+                Rentals rental = new Rentals(0, 0, 0, null, null);
+                rental.setRentalID(rs.getInt(1));
+                rental.setCustomerID(rs.getInt(2));
+                rental.setMovieID(rs.getInt(3));
+                rental.setDateRented(rs.getDate(4));
+                rental.setDateDue(rs.getDate(5));
+                RentalList.add(rental);
+            }
+            
+            rs = stmt.executeQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'Rentals'");
+            while (rs.next()) {
+                Columns.add(rs.getString(1));
+            }
 
 //            GENERATES RECORDS FOR RENTAL TABLE IN DATABASE
 //======================================================================================================================================================================================
@@ -110,6 +129,16 @@ public class Main implements ActionListener {
         catch (SQLException e) {
             e.printStackTrace();
         }
+
+        for (int i = 0; i < RentalList.size(); i++) {
+            System.out.println("RentalID: "+(RentalList.get(i)).getRentalID()+"    CustomerID: "+(RentalList.get(i)).getCustomerID()+"    MovieID: "+(RentalList.get(i)).getMovieID()+"    Date Rented: "+(RentalList.get(i)).getDateRented()+"    Date Due: "+(RentalList.get(i)).getDateDue());
+        }
+
+        for (int i = 0; i < Columns.size(); i++) {
+            System.out.println(Columns.get(i));
+        }
+
+        Display = new JTable(RentalList.toString(), Columns);
 
         frame.setSize(width, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
