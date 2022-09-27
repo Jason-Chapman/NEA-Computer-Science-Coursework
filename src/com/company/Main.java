@@ -8,11 +8,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Main implements ActionListener {
 
     public static JPanel panel = new JPanel();
     public static JFrame frame = new JFrame();
+    public static Random random = new Random();
 
     public static JTextField usernameText;
     public static JPasswordField passwordText;
@@ -26,9 +30,9 @@ public class Main implements ActionListener {
     public static JButton MONOSPACED;
     public static JSlider fontSize;
     public static JTextField textfieldExample;
-
-    public static String Username;
-    public static String Password;
+    public static JTable Display;
+    public static ArrayList<Rentals> RentalList =  new ArrayList<Rentals>();
+    public static ArrayList<String> Columns = new ArrayList<String>();
 
     public static Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
     public static int width = resolution.width;
@@ -39,27 +43,102 @@ public class Main implements ActionListener {
     public static ComponentFontSettings buttons = new ComponentFontSettings("SANS_SERIF", 12);
     public static ComponentFontSettings textfields = new ComponentFontSettings("SANS_SERIF", 12);
 
+    public static String Username;
+    public static String Password;
+    public static int AccessLevel;
+
     public static void main(String[] args) {
-
         String ConnectionURL = "jdbc:sqlserver://movierentalserver.database.windows.net:1433;database=movieRentalDatabase;user=jc210762@movierentalserver;password={Cooper27};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+        ResultSet rs;
 
+        // Open a connection
         try(Connection conn = DriverManager.getConnection(ConnectionURL);
             Statement stmt = conn.createStatement();
-        )
-        {
-            ResultSet resultSet = stmt.executeQuery("SELECT Username, Password FROM [dbo].[tblEmployees]");
+        ) {
+            rs = stmt.executeQuery("SELECT Username, Password, AccessLevel FROM [dbo].[tblEmployees]");
 
-            while (resultSet.next()) {
-                Username = resultSet.getString(1);
-                Password = resultSet.getString(2);
-                System.out.println("Username: "+ Username +"\nPassword: " + Password);
+            while (rs.next()) {
+                Username = rs.getString(1);
+                Password = rs.getString(2);
+                AccessLevel = rs.getInt(3);
             }
 
-            resultSet.close();
+            rs = stmt.executeQuery("SELECT * FROM [dbo].[Rentals]");
+            while (rs.next()) {
+                Rentals rental = new Rentals(0, 0, 0, null, null);
+                rental.setRentalID(rs.getInt(1));
+                rental.setCustomerID(rs.getInt(2));
+                rental.setMovieID(rs.getInt(3));
+                rental.setDateRented(rs.getDate(4));
+                rental.setDateDue(rs.getDate(5));
+                RentalList.add(rental);
+            }
+            
+            rs = stmt.executeQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'Rentals'");
+            while (rs.next()) {
+                Columns.add(rs.getString(1));
+            }
+
+//            GENERATES RECORDS FOR RENTAL TABLE IN DATABASE
+//======================================================================================================================================================================================
+//            int RentalID = 999;
+//            int CustomerID, MovieID;
+//            int Yrented, Mrented, Drented, Ydue, Mdue, Ddue;
+//            for (int i = 1; i < 51; i++) {
+//                Yrented = random.nextInt(2)+2022;
+//                Mrented = random.nextInt(12-1)+1;
+//                Drented = random.nextInt(28-1)+1;
+//                Ydue = random.nextInt(2)+2022;
+//                Mdue = random.nextInt(12-1)+1;
+//                Ddue = random.nextInt(28-1)+1;
+//                while (Ydue < Yrented) {
+//                    Yrented = random.nextInt(2023-2022)+2022;
+//                    Ydue = random.nextInt(2023-2022)+2022;
+//                }
+//                while (Ydue == Yrented && Mdue < Mrented) {
+//                    Mrented = random.nextInt(12-1)+1;
+//                    Mdue = random.nextInt(12-1)+1;
+//                }
+//                while (Ydue == Yrented && Mdue == Mrented && Ddue < Drented) {
+//                    Drented = random.nextInt(28-1)+1;
+//                    Ddue = random.nextInt(28-1)+1;
+//                }
+//
+//                RentalID++;
+//                CustomerID = random.nextInt(1049-1000)+1000;
+//                MovieID = random.nextInt(1049-1001)+1001;
+//                stmt.execute("INSERT INTO [dbo].[Rentals] VALUES ("+RentalID+", "+CustomerID+", "+MovieID+", '"+Yrented+"-"+Mrented+"-"+Drented+"', '"+Ydue+"-"+Mdue+"-"+Ddue+"')");
+//            }
+//======================================================================================================================================================================================
+
+
+//            GENERATES RECORDS FOR CUSTOMER TABLE IN DATABASE
+//==========================================================================================================================================================
+//            String PhoneNumber;
+//            int CustomerID = 999;
+//            String Name;
+//            for (int i = 1; i < 51; i++) {
+//                PhoneNumber = ""+Integer.toString(random.nextInt(99999 - 10000)+10000)+" "+Integer.toString(random.nextInt(999999 - 100000)+100000)+"";
+//                CustomerID++;
+//                Name = "CustomerName"+i+"".toString();
+//                stmt.execute("INSERT INTO [dbo].[tblCustomers] VALUES ("+CustomerID+", '"+Name+"', '"+PhoneNumber+"')");
+//            }
+//==========================================================================================================================================================
+
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
+
+        for (int i = 0; i < RentalList.size(); i++) {
+            System.out.println("RentalID: "+(RentalList.get(i)).getRentalID()+"    CustomerID: "+(RentalList.get(i)).getCustomerID()+"    MovieID: "+(RentalList.get(i)).getMovieID()+"    Date Rented: "+(RentalList.get(i)).getDateRented()+"    Date Due: "+(RentalList.get(i)).getDateDue());
+        }
+
+        for (int i = 0; i < Columns.size(); i++) {
+            System.out.println(Columns.get(i));
+        }
+
+        Display = new JTable(RentalList.toString(), Columns);
 
         frame.setSize(width, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -290,7 +369,7 @@ public class Main implements ActionListener {
         if ((actionEvent.toString()).contains("cmd=Login")) {
             String username = (usernameText.getText()).toLowerCase(); //REMOVES CAPS SENSITIVITY FROM USERNAME
             String password = passwordText.getText();
-            if (username.equals(Username) && password.equals(Password)) {
+            if (username.equals(Username) && password.equals(Password)) { //REPLACE "username" & "Password" WITH VARIABLES FROM DATABASE IN FUTURE
                 mainMenu();
             }
             else {
