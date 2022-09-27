@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -30,9 +29,10 @@ public class Main implements ActionListener {
     public static JButton MONOSPACED;
     public static JSlider fontSize;
     public static JTextField textfieldExample;
-    public static JTable Display;
-    public static ArrayList<Rentals> RentalList =  new ArrayList<Rentals>();
+    public static ArrayList<Rentals> RentalList = new ArrayList<Rentals>();
     public static ArrayList<String> Columns = new ArrayList<String>();
+    public static RentalsTableModel model;
+    public static JTable Display;
 
     public static Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
     public static int width = resolution.width;
@@ -130,15 +130,8 @@ public class Main implements ActionListener {
             e.printStackTrace();
         }
 
-        for (int i = 0; i < RentalList.size(); i++) {
-            System.out.println("RentalID: "+(RentalList.get(i)).getRentalID()+"    CustomerID: "+(RentalList.get(i)).getCustomerID()+"    MovieID: "+(RentalList.get(i)).getMovieID()+"    Date Rented: "+(RentalList.get(i)).getDateRented()+"    Date Due: "+(RentalList.get(i)).getDateDue());
-        }
-
-        for (int i = 0; i < Columns.size(); i++) {
-            System.out.println(Columns.get(i));
-        }
-
-        Display = new JTable(RentalList.toString(), Columns);
+        model = new RentalsTableModel(RentalList);
+        Display = new JTable(model);
 
         frame.setSize(width, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -190,6 +183,12 @@ public class Main implements ActionListener {
         JButton EditRentals;
         JButton DeleteRental;
         JButton FontEdit;
+
+        JScrollPane scrollPane = new JScrollPane(Display);
+        scrollPane.setBounds(0, 50, width-15, height-50); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        Display.setFillsViewportHeight(true);
+        Display.setPreferredScrollableViewportSize(new Dimension(width, height-50));
+        panel.add(scrollPane);
 
         JLabel welcomeLabel;
         welcomeLabel = new JLabel("Welcome to the Rental System!", SwingConstants.CENTER);
