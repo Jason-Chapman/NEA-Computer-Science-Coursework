@@ -24,6 +24,7 @@ public class Main implements ActionListener {
     public static JButton Labels;
     public static JButton Buttons;
     public static JButton TextFields;
+    public static JButton Tables;
     public static JButton SANS_SERIF;
     public static JButton SERIF;
     public static JButton MONOSPACED;
@@ -42,6 +43,7 @@ public class Main implements ActionListener {
     public static ComponentFontSettings labels = new ComponentFontSettings("SANS_SERIF", 12);
     public static ComponentFontSettings buttons = new ComponentFontSettings("SANS_SERIF", 12);
     public static ComponentFontSettings textfields = new ComponentFontSettings("SANS_SERIF", 12);
+    public static ComponentFontSettings tables = new ComponentFontSettings("SANS_SERIF", 12);
 
     public static String Username;
     public static String Password;
@@ -136,9 +138,15 @@ public class Main implements ActionListener {
         frame.setSize(width, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
-
         panel.setLayout(null);
         frame.setVisible(true);
+
+        UIManager.put(Type + ".font", new FontUIResource("SANS_SERIF", Font.BOLD, 12));
+        UIManager.put(Type + ".font", new FontUIResource("SANS_SERIF", Font.BOLD, 12));
+        UIManager.put(Type + ".font", new FontUIResource("SANS_SERIF", Font.BOLD, 12));
+        Display.setFont(new FontUIResource("SANS_SERIF", Font.PLAIN, 12));
+        Display.setRowHeight(12);
+        Display.getTableHeader().setFont(new Font("SANS_SERIF", Font.BOLD, 12));
 
         login();
     }
@@ -185,7 +193,7 @@ public class Main implements ActionListener {
         JButton FontEdit;
 
         JScrollPane scrollPane = new JScrollPane(Display);
-        scrollPane.setBounds(0, 50, width-15, height-50); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        scrollPane.setBounds(0, 50, width-15, height-120); //(X-POS, Y-POS, WIDTH, HEIGHT)
         Display.setFillsViewportHeight(true);
         Display.setPreferredScrollableViewportSize(new Dimension(width, height-50));
         panel.add(scrollPane);
@@ -211,7 +219,7 @@ public class Main implements ActionListener {
         panel.add(DeleteRental);
 
         FontEdit = new JButton("Settings (Esc)");
-        FontEdit.setBounds((width/4)*3, 0, width/4, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        FontEdit.setBounds((width/4)*3, 0, (width/4)-16, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
         FontEdit.addActionListener(new Main());
         panel.add(FontEdit);
 
@@ -275,34 +283,29 @@ public class Main implements ActionListener {
         panel.add(ComponentTypeChoice);
 
         Labels = new JButton("Labels");
-        Labels.setBounds((width/2) - 225, (height/2) - 200, 150, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        Labels.setBounds((width/2) - 300, (height/2) - 200, 150, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         Labels.addActionListener(new Main());
         panel.add(Labels);
 
         Buttons = new JButton("Buttons");
-        Buttons.setBounds((width/2) - 75, (height/2) - 200, 150, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        Buttons.setBounds((width/2) - 150, (height/2) - 200, 150, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         Buttons.addActionListener(new Main());
         panel.add(Buttons);
 
         TextFields = new JButton("TextFields");
-        TextFields.setBounds((width/2) + 75, (height/2) - 200, 150, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        TextFields.setBounds((width/2), (height/2) - 200, 150, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         TextFields.addActionListener(new Main());
         panel.add(TextFields);
+
+        Tables = new JButton("Tables");
+        Tables.setBounds((width/2) + 150, (height/2) - 200, 150, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        Tables.addActionListener(new Main());
+        panel.add(Tables);
 
         JLabel SelectFont;
         SelectFont = new JLabel("Select Font:", SwingConstants.CENTER);
         SelectFont.setBounds(0, (height/2) - 150, width, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(SelectFont);
-
-        JLabel FontExample1;
-        FontExample1 = new JLabel("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz", SwingConstants.CENTER);
-        FontExample1.setBounds(0, (height/2) + 125, width, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        panel.add(FontExample1);
-
-        JLabel FontExample2;
-        FontExample2 = new JLabel("0123456789", SwingConstants.CENTER);
-        FontExample2.setBounds(0, (height/2) + 150, width, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        panel.add(FontExample2);
 
         SANS_SERIF = new JButton("Sans Serif");
         SANS_SERIF.setBounds((width/2) - 225, (height/2) - 100, 150, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
@@ -329,11 +332,7 @@ public class Main implements ActionListener {
         SelectSize.setBounds(0, (height/2) - 50, width, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(SelectSize);
 
-        textfieldExample = new JTextField(20);
-        textfieldExample.setBounds((width/2) - 100, (height/2) + 200, 200, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        panel.add(textfieldExample);
-
-        fontSize = new JSlider(JSlider.HORIZONTAL, 8, 16, 12);
+        fontSize = new JSlider(JSlider.HORIZONTAL, 4, 30, 12);
         fontSize.setMinorTickSpacing(1);
         fontSize.setMajorTickSpacing(2);
         fontSize.setPaintTicks(true);
@@ -351,6 +350,9 @@ public class Main implements ActionListener {
                 else if (Type == "Textfield") {
                     textfields.setFontSize(fontSize.getValue());
                 }
+                else if (Type == "Table") {
+                    tables.setFontSize(fontSize.getValue());
+                }
             }
         });
 
@@ -359,6 +361,18 @@ public class Main implements ActionListener {
         Update.setBounds((width/2) - 100, (height/2) + 75, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         Update.addActionListener(new Main());
         panel.add(Update);
+
+        JButton Reset;
+        Reset = new JButton("Reset Selected");
+        Reset.setBounds((width/2) - 100, (height/2) + 115, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        Reset.addActionListener(new Main());
+        panel.add(Reset);
+
+        JButton RESET;
+        RESET = new JButton("Reset All");
+        RESET.setBounds((width/2) - 100, (height/2) + 145, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        RESET.addActionListener(new Main());
+        panel.add(RESET);
 
         panel.update(panel.getGraphics());
     }
@@ -399,6 +413,7 @@ public class Main implements ActionListener {
             Labels.setEnabled(false);
             Buttons.setEnabled(true);
             TextFields.setEnabled(true);
+            Tables.setEnabled(true);
             SANS_SERIF.setEnabled(true);
             SERIF.setEnabled(true);
             MONOSPACED.setEnabled(true);
@@ -417,6 +432,7 @@ public class Main implements ActionListener {
             Buttons.setEnabled(false);
             Labels.setEnabled(true);
             TextFields.setEnabled(true);
+            Tables.setEnabled(true);
             SANS_SERIF.setEnabled(true);
             SERIF.setEnabled(true);
             MONOSPACED.setEnabled(true);
@@ -435,6 +451,7 @@ public class Main implements ActionListener {
             TextFields.setEnabled(false);
             Labels.setEnabled(true);
             Buttons.setEnabled(true);
+            Tables.setEnabled(true);
             SANS_SERIF.setEnabled(true);
             SERIF.setEnabled(true);
             MONOSPACED.setEnabled(false);
@@ -445,6 +462,26 @@ public class Main implements ActionListener {
             } else if (textfields.getFont() == "SERIF") {
                 SERIF.setEnabled(false);
             } else if (textfields.getFont() == "MONOSPACED") {
+                MONOSPACED.setEnabled(false);
+            }
+        }
+
+        else if ((actionEvent.toString()).contains("cmd=Tables")) {
+            Type = "Table";
+            Tables.setEnabled(false);
+            TextFields.setEnabled(true);
+            Labels.setEnabled(true);
+            Buttons.setEnabled(true);
+            SANS_SERIF.setEnabled(true);
+            SERIF.setEnabled(true);
+            MONOSPACED.setEnabled(true);
+            fontSize.setEnabled(true);
+            fontSize.setValue(tables.getFontSize());
+            if (tables.getFont() == "SANS_SERIF") {
+                SANS_SERIF.setEnabled((false));
+            } else if (tables.getFont() == "SERIF") {
+                SERIF.setEnabled(false);
+            } else if (tables.getFont() == "MONOSPACED") {
                 MONOSPACED.setEnabled(false);
             }
         }
@@ -462,6 +499,9 @@ public class Main implements ActionListener {
                 MONOSPACED.setEnabled(false);
                 textfields.setFont("SANS_SERIF");
             }
+            else if (Type == "Table") {
+                tables.setFont("SANS_SERIF");
+            }
         }
         else if ((actionEvent.toString()).contains("cmd=Serif")) {
             SANS_SERIF.setEnabled(true);
@@ -476,6 +516,9 @@ public class Main implements ActionListener {
                 MONOSPACED.setEnabled(false);
                 textfields.setFont("SERIF");
             }
+            else if (Type == "Table") {
+                tables.setFont("SERIF");
+            }
         }
         else if ((actionEvent.toString()).contains("cmd=Monospaced")) {
             SANS_SERIF.setEnabled(true);
@@ -489,6 +532,9 @@ public class Main implements ActionListener {
             else if (Type == "Textfield") {
                 textfields.setFont("MONOSPACED");
             }
+            else if (Type == "Table") {
+                tables.setFont("MONOSPACED");
+            }
         }
         else if ((actionEvent.toString()).contains("cmd=Update")) {
             if (Type == "Label") {
@@ -498,6 +544,52 @@ public class Main implements ActionListener {
             } else if (Type == "TextField") {
                 UIManager.put(Type+".font", new FontUIResource(textfields.getFont(), Font.BOLD, textfields.fontSize));
             }
+            else if (Type == "Table") {
+                Display.setFont(new FontUIResource(tables.getFont(), Font.PLAIN, tables.getFontSize()));
+                Display.setRowHeight(tables.getFontSize());
+                Display.getTableHeader().setFont(new Font(tables.getFont(), Font.BOLD, tables.getFontSize()));
+            }
+            FontEdit();
+        }
+        else if ((actionEvent.toString()).contains("cmd=Reset Selected")) {
+            if (Type == "Label") {
+                labels.setFont("SANS_SERIF");
+                labels.setFontSize(12);
+                UIManager.put(Type+".font", new FontUIResource(labels.getFont(), Font.BOLD, labels.fontSize));
+            } else if (Type == "Button") {
+                buttons.setFont("SANS_SERIF");
+                buttons.setFontSize(12);
+                UIManager.put(Type+".font", new FontUIResource(buttons.getFont(), Font.BOLD, buttons.fontSize));
+            }
+            else if (Type == "Textfield") {
+                textfields.setFont("SANS_SERIF");
+                textfields.setFontSize(12);
+                UIManager.put(Type+".font", new FontUIResource(textfields.getFont(), Font.BOLD, textfields.fontSize));
+            }
+            else if (Type == "Table") {
+                tables.setFont("SANS_SERIF");
+                tables.setFontSize(12);
+                Display.setFont(new FontUIResource(tables.getFont(), Font.PLAIN, tables.getFontSize()));
+                Display.setRowHeight(tables.getFontSize());
+                Display.getTableHeader().setFont(new Font(tables.getFont(), Font.BOLD, tables.getFontSize()));
+            }
+            FontEdit();
+        }
+        else if ((actionEvent.toString()).contains("cmd=Reset All")) {
+            buttons.setFont("SANS_SERIF");
+            textfields.setFont("SANS_SERIF");
+            labels.setFont("SANS_SERIF");
+            tables.setFont("SANS_SERIF");
+            buttons.setFontSize(12);
+            textfields.setFontSize(12);
+            labels.setFontSize(12);
+            tables.setFontSize(12);
+            UIManager.put("Button.font", new FontUIResource(buttons.getFont(), Font.BOLD, buttons.fontSize));
+            UIManager.put("Label.font", new FontUIResource(labels.getFont(), Font.BOLD, labels.fontSize));
+            UIManager.put("TextField.font", new FontUIResource(textfields.getFont(), Font.BOLD, textfields.fontSize));
+            Display.setFont(new FontUIResource(tables.getFont(), Font.PLAIN, tables.getFontSize()));
+            Display.setRowHeight(tables.getFontSize());
+            Display.getTableHeader().setFont(new Font(tables.getFont(), Font.BOLD, tables.getFontSize()));
             FontEdit();
         }
     }
