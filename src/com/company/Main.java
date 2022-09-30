@@ -3,6 +3,8 @@ package com.company;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,6 +12,9 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Random;
+import javax.swing.RowFilter;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class Main implements ActionListener {
 
@@ -17,6 +22,7 @@ public class Main implements ActionListener {
     public static JFrame frame = new JFrame();
     public static Random random = new Random();
 
+    JTextField searchBar;
     public static JTextField usernameText;
     public static JPasswordField passwordText;
     public static JLabel success;
@@ -34,6 +40,7 @@ public class Main implements ActionListener {
     public static ArrayList<String> Columns = new ArrayList<String>();
     public static RentalsTableModel model;
     public static JTable Display;
+    private TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(Display.getModel());
 
     public static Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
     public static int width = resolution.width;
@@ -184,7 +191,7 @@ public class Main implements ActionListener {
         panel.update(panel.getGraphics());
     }
 
-    public static void mainMenu() {
+    public void mainMenu() {
         panel.removeAll();
 
         JButton NewRental;
@@ -192,11 +199,53 @@ public class Main implements ActionListener {
         JButton DeleteRental;
         JButton FontEdit;
 
+        searchBar = new JTextField(255);
+        searchBar.setBounds(0, 50, width-100, 25);
+        panel.add(searchBar);
+
+        JButton Filter = new JButton("Search");
+        Filter.setBounds(width-100, 50, 84, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        Filter.addActionListener(new Main());
+        panel.add(Filter);
+
         JScrollPane scrollPane = new JScrollPane(Display);
-        scrollPane.setBounds(0, 50, width-15, height-120); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        scrollPane.setBounds(0, 75, width-15, height-120); //(X-POS, Y-POS, WIDTH, HEIGHT)
         Display.setFillsViewportHeight(true);
         Display.setPreferredScrollableViewportSize(new Dimension(width, height-50));
+        Display.setAutoCreateRowSorter(true);
+        Display.setRowSorter(rowSorter);
         panel.add(scrollPane);
+
+//        searchBar.getDocument().addDocumentListener(new DocumentListener(){
+//
+//            @Override
+//            public void insertUpdate(DocumentEvent e) {
+//                String text = searchBar.getText();
+//
+//                if (text.trim().length() == 0) {
+//                    rowSorter.setRowFilter(null);
+//                } else {
+//                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+//                }
+//            }
+//
+//            @Override
+//            public void removeUpdate(DocumentEvent e) {
+//                String text = searchBar.getText();
+//
+//                if (text.trim().length() == 0) {
+//                    rowSorter.setRowFilter(null);
+//                } else {
+//                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+//                }
+//            }
+//
+//            @Override
+//            public void changedUpdate(DocumentEvent e) {
+//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//            }
+//
+//        });
 
         JLabel welcomeLabel;
         welcomeLabel = new JLabel("Welcome to the Rental System!", SwingConstants.CENTER);
@@ -591,6 +640,15 @@ public class Main implements ActionListener {
             Display.setRowHeight(tables.getFontSize());
             Display.getTableHeader().setFont(new Font(tables.getFont(), Font.BOLD, tables.getFontSize()));
             FontEdit();
+        }
+        else if ((actionEvent.toString()).contains("cmd=Search")) {
+            for(int i = 0; i < Display.getRowCount(); i++){//For each row
+                for(int j = 0; j < Display.getColumnCount(); j++){//For each column in that row
+                    if(Display.getModel().getValueAt(i, j).equals(searchBar.getText())){//Search the model
+                        System.out.println(Display.getModel().getValueAt(i, j));//Print if found string
+                    }
+                }
+            }
         }
     }
 }
