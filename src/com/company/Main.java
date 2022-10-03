@@ -1,10 +1,10 @@
 package com.company;
 
+//MAKE JTABLE DISPLAY DATE AS YYYY-MM-DD INSTEAD OF DD-JAN-YYYY
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Random;
-import javax.swing.RowFilter;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -22,7 +21,7 @@ public class Main implements ActionListener {
     public static JFrame frame = new JFrame();
     public static Random random = new Random();
 
-    JTextField searchBar;
+    public static JTextField searchBar;
     public static JTextField usernameText;
     public static JPasswordField passwordText;
     public static JLabel success;
@@ -35,7 +34,6 @@ public class Main implements ActionListener {
     public static JButton SERIF;
     public static JButton MONOSPACED;
     public static JSlider fontSize;
-    public static JTextField textfieldExample;
     public static ArrayList<Rentals> RentalList = new ArrayList<Rentals>();
     public static ArrayList<String> Columns = new ArrayList<String>();
     public static RentalsTableModel model;
@@ -79,7 +77,9 @@ public class Main implements ActionListener {
                 rental.setCustomerID(rs.getInt(2));
                 rental.setMovieID(rs.getInt(3));
                 rental.setDateRented(rs.getDate(4));
+                System.out.println("Rented: "+(rs.getDate(4)).toString());
                 rental.setDateDue(rs.getDate(5));
+                System.out.println("Due: "+rs.getDate(5)+"\n");
                 RentalList.add(rental);
             }
             
@@ -200,13 +200,18 @@ public class Main implements ActionListener {
         JButton FontEdit;
 
         searchBar = new JTextField(255);
-        searchBar.setBounds(0, 50, width-100, 25);
+        searchBar.setBounds(0, 50, width-184, 25);
         panel.add(searchBar);
 
         JButton Filter = new JButton("Search");
-        Filter.setBounds(width-100, 50, 84, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        Filter.setBounds(width-184, 50, 84, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         Filter.addActionListener(new Main());
         panel.add(Filter);
+
+        JButton Clear = new JButton("Clear");
+        Clear.setBounds(width-100, 50, 84, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        Clear.addActionListener(new Main());
+        panel.add(Clear);
 
         JScrollPane scrollPane = new JScrollPane(Display);
         scrollPane.setBounds(0, 75, width-15, height-120); //(X-POS, Y-POS, WIDTH, HEIGHT)
@@ -216,6 +221,7 @@ public class Main implements ActionListener {
         Display.setRowSorter(rowSorter);
         panel.add(scrollPane);
 
+//
 //        searchBar.getDocument().addDocumentListener(new DocumentListener(){
 //
 //            @Override
@@ -223,7 +229,7 @@ public class Main implements ActionListener {
 //                String text = searchBar.getText();
 //
 //                if (text.trim().length() == 0) {
-//                    rowSorter.setRowFilter(null);
+//                    rowSorter.setRojc201wFilter(null);
 //                } else {
 //                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
 //                }
@@ -642,13 +648,25 @@ public class Main implements ActionListener {
             FontEdit();
         }
         else if ((actionEvent.toString()).contains("cmd=Search")) {
+            ArrayList<Rentals> TempSortList = new ArrayList<Rentals>();
+            RentalsTableModel tempModel;
+            Display.setModel(model);
+            Display.repaint();
             for(int i = 0; i < Display.getRowCount(); i++){//For each row
                 for(int j = 0; j < Display.getColumnCount(); j++){//For each column in that row
-                    if(Display.getModel().getValueAt(i, j).equals(searchBar.getText())){//Search the model
-                        System.out.println(Display.getModel().getValueAt(i, j));//Print if found string
+                    if((Display.getValueAt(i, j)).toString().equals(searchBar.getText())){//Search the model
+                        Rentals tempRental = new Rentals((Integer) Display.getValueAt(i, 0), (Integer) Display.getValueAt(i, 1), (Integer) Display.getValueAt(i, 2), (Date) Display.getValueAt(i, 3), (Date) Display.getValueAt(i, 4));
+                        TempSortList.add(tempRental);
                     }
                 }
             }
+            tempModel = new RentalsTableModel(TempSortList);
+            Display.setModel(tempModel);
+            Display.repaint();
+        }
+        else if ((actionEvent.toString()).contains("cmd=Clear")) {
+            Display.setModel(model);
+            Display.repaint();
         }
     }
 }

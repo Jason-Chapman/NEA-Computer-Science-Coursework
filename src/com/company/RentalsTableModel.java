@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import static com.sun.corba.se.impl.util.RepositoryId.cache;
+
 public class RentalsTableModel extends AbstractTableModel {
     private List<Rentals> data;
     private List<String> columnNames = new ArrayList<String>();
@@ -44,5 +46,14 @@ public class RentalsTableModel extends AbstractTableModel {
             case 4: return rental.getDateDue();
         }
         return null;
+    }
+
+    public void deleteData() {
+        int rows = getRowCount();
+        if (rows == 0) {
+            return;
+        }
+        cache.clear();
+        fireTableRowsDeleted(0, rows - 1);
     }
 }
