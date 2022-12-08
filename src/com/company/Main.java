@@ -21,6 +21,7 @@ public class Main implements ActionListener {
     public static JFrame frame = new JFrame();
     public static Random random = new Random();
 
+    public static Rentals tempRental = new Rentals(0, 0, 0, null, null);
     public static JTextField searchBar;
     public static JTextField usernameText;
     public static JPasswordField passwordText;
@@ -300,13 +301,33 @@ public class Main implements ActionListener {
     public static void editRentals() {
         panel.removeAll();
 
-        JLabel welcomeLabel;
-        welcomeLabel = new JLabel("Welcome to the Editing Section!", SwingConstants.CENTER);
-        welcomeLabel.setBounds(0, (height/2) - 200, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        panel.add(welcomeLabel);
+        JLabel tempRentalID;
+        tempRentalID = new JLabel("Current RentalID: "+tempRental.getRentalID(), SwingConstants.CENTER);
+        tempRentalID.setBounds(-280, (height/2) - 200, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(tempRentalID);
+
+        JLabel tempCustomerID;
+        tempCustomerID = new JLabel("Current CustomerID: "+tempRental.getCustomerID(), SwingConstants.CENTER);
+        tempCustomerID.setBounds(-270, (height/2) - 175, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(tempCustomerID);
+
+        JLabel tempMovieID;
+        tempMovieID = new JLabel("Current MovieID: "+tempRental.getMovieID(), SwingConstants.CENTER);
+        tempMovieID.setBounds(-280, (height/2) - 150, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(tempMovieID);
+
+        JLabel tempDateRented;
+        tempDateRented = new JLabel("Current Date Rented: "+tempRental.getDateRented(), SwingConstants.CENTER);
+        tempDateRented.setBounds(-250, (height/2) - 125, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(tempDateRented);
+
+        JLabel tempDateDue;
+        tempDateDue = new JLabel("Current Date Due: "+tempRental.getDateDue(), SwingConstants.CENTER);
+        tempDateDue.setBounds(-259, (height/2) - 100, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(tempDateDue);
 
         ReturnToMenu = new JButton("Return to Main Menu");
-        ReturnToMenu.setBounds((width/2) - 100, (height/2) - 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        ReturnToMenu.setBounds((width/2) - 100, (height/2), 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         ReturnToMenu.addActionListener(new Main());
         panel.add(ReturnToMenu);
 
@@ -448,6 +469,13 @@ public class Main implements ActionListener {
             newRental();
         }
         else if ((actionEvent.toString()).contains("cmd=Edit Rentals")) {
+            tempRental.setRentalID((Integer) model.getValueAt(Display.getSelectedRow(), 0));
+            tempRental.setCustomerID((Integer) model.getValueAt(Display.getSelectedRow(), 1));
+            tempRental.setMovieID((Integer) model.getValueAt(Display.getSelectedRow(), 2));
+            tempRental.setDateRented((java.util.Date) model.getValueAt(Display.getSelectedRow(), 3));
+            tempRental.setDateDue((java.util.Date) model.getValueAt(Display.getSelectedRow(), 4));
+
+            System.out.println("" + tempRental.getRentalID() + "\n" + tempRental.getCustomerID() + "\n" +  tempRental.getMovieID() + "\n" + tempRental.getDateRented() + "\n" + tempRental.getDateDue());
             editRentals();
         }
         else if ((actionEvent.toString()).contains("cmd=Delete Rental")) {
