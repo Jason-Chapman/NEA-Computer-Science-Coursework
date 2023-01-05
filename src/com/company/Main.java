@@ -83,9 +83,7 @@ public class Main implements ActionListener {
                 rental.setCustomerID(rs.getInt(2));
                 rental.setMovieID(rs.getInt(3));
                 rental.setDateRented(rs.getDate(4));
-                System.out.println("Rented: "+(rs.getDate(4)).toString());
                 rental.setDateDue(rs.getDate(5));
-                System.out.println("Due: "+rs.getDate(5)+"\n");
                 RentalList.add(rental);
             }
             
@@ -145,8 +143,7 @@ public class Main implements ActionListener {
             e.printStackTrace();
         }
 
-        model = new RentalsTableModel(RentalList);
-        Display = new JTable(model);
+        Display = new JTable(model = new RentalsTableModel(RentalList));
 
         frame.setSize(width, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -264,7 +261,7 @@ public class Main implements ActionListener {
         welcomeLabel.setBounds(0, (height/2) - 200, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(welcomeLabel);
 
-        NewRental = new JButton("New Rental");
+        NewRental = new JButton("Create New Rental");
         NewRental.setBounds(0, 0, width/4, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
         NewRental.addActionListener(new Main());
         panel.add(NewRental);
@@ -555,7 +552,7 @@ public class Main implements ActionListener {
                 success.setText("Username or Password is incorrect.");
             }
         }
-        else if ((actionEvent.toString()).contains("cmd=New Rental")) {
+        else if ((actionEvent.toString()).contains("cmd=Create New Rental")) {
             newRental();
         }
         else if ((actionEvent.toString()).contains("cmd=Edit Selected Rental")) {
@@ -568,7 +565,7 @@ public class Main implements ActionListener {
             System.out.println("" + tempRental.getRentalID() + "\n" + tempRental.getCustomerID() + "\n" +  tempRental.getMovieID() + "\n" + tempRental.getDateRented() + "\n" + tempRental.getDateDue());
             editRentals();
         }
-        else if ((actionEvent.toString()).contains("cmd=Delete Rental")) {
+        else if ((actionEvent.toString()).contains("cmd=Delete Selected Rental")) {
             deleteRental();
         }
         else if ((actionEvent.toString()).contains("cmd=Return to Main Menu")) {
@@ -577,7 +574,7 @@ public class Main implements ActionListener {
         else if ((actionEvent.toString()).contains("cmd=Quit")) {
             frame.dispose();
         }
-        else if ((actionEvent.toString()).contains("cmd=Settings (Esc)")) {
+        else if ((actionEvent.toString()).contains("cmd=Settings")) {
             FontEdit();
         }
 
