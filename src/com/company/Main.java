@@ -1,7 +1,5 @@
 package com.company;
 
-//MAKE JTABLE DISPLAY DATE AS YYYY-MM-DD INSTEAD OF DD-JAN-YYYY
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -9,7 +7,9 @@ import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.table.TableModel;
@@ -20,6 +20,8 @@ public class Main implements ActionListener {
     public static JPanel panel = new JPanel();
     public static JFrame frame = new JFrame();
     public static Random random = new Random();
+
+    public static SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
     public static Rentals tempRental = new Rentals(0, 0, 0, null, null);
     public static JTextField searchBar;
@@ -34,6 +36,8 @@ public class Main implements ActionListener {
     public static JButton SANS_SERIF;
     public static JButton SERIF;
     public static JButton MONOSPACED;
+    public static JButton AddRental;
+    public static JButton UpdateRental;
     public static JSlider fontSize;
     public static ArrayList<Rentals> RentalList = new ArrayList<Rentals>();
     public static ArrayList<String> Columns = new ArrayList<String>();
@@ -42,8 +46,12 @@ public class Main implements ActionListener {
     public static JTextField newRentalRentalIDinput;
     public static JTextField newRentalMovieIDinput;
     public static JTextField newRentalCustomerIDinput;
-    public static JTextField newRentalDateRentedinput;
-    public static JTextField newRentalDateDueinput;
+    public static JTextField newRentalDateRentedYearinput;
+    public static JTextField newRentalDateRentedMonthinput;
+    public static JTextField newRentalDateRentedDayinput;
+    public static JTextField newRentalDateDueYearinput;
+    public static JTextField newRentalDateDueMonthinput;
+    public static JTextField newRentalDateDueDayinput;
     private TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(Display.getModel());
 
     public static Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
@@ -289,48 +297,132 @@ public class Main implements ActionListener {
 
         JLabel rentalID;
         rentalID = new JLabel("RentalID:", SwingConstants.CENTER);
-        rentalID.setBounds((width/2) - 82, (height/2) - 175, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        rentalID.setBounds((width/2) - 82, (height/2) - 200, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(rentalID);
 
         JLabel movieID;
         movieID = new JLabel("MovieID:", SwingConstants.CENTER);
-        movieID.setBounds((width/2) - 82, (height/2) - 75, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        movieID.setBounds((width/2) - 82, (height/2) - 100, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(movieID);
 
         JLabel customerID;
         customerID = new JLabel("CustomerID:", SwingConstants.CENTER);
-        customerID.setBounds((width/2) - 82, (height/2) - 125, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        customerID.setBounds((width/2) - 82, (height/2) - 150, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(customerID);
 
         JLabel dateRented;
-        dateRented = new JLabel("Date Rented:", SwingConstants.CENTER);
-        dateRented.setBounds((width/2) - 82, (height/2) - 25, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        dateRented = new JLabel("(YYYY-DD-MM) Date Rented:", SwingConstants.CENTER);
+        dateRented.setBounds((width/2) - 82, (height/2) -50, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(dateRented);
 
         JLabel dateDue;
-        dateDue = new JLabel("Date Due:", SwingConstants.CENTER);
-        dateDue.setBounds((width/2) - 82, (height/2) + 25, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        dateDue = new JLabel("(YYYY-DD-MM) Date Due:", SwingConstants.CENTER);
+        dateDue.setBounds((width/2) - 82, (height/2), 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(dateDue);
 
         newRentalRentalIDinput = new JTextField(20);
-        newRentalRentalIDinput.setBounds((width/2) - 82, (height/2) - 150, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalRentalIDinput.setBounds((width/2) - 82, (height/2) - 175, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalRentalIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalRentalIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
         panel.add(newRentalRentalIDinput);
 
         newRentalMovieIDinput = new JTextField(20);
-        newRentalMovieIDinput.setBounds((width/2) - 82, (height/2) - 50, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalMovieIDinput.setBounds((width/2) - 82, (height/2) - 125, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalMovieIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalMovieIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
         panel.add(newRentalMovieIDinput);
 
         newRentalCustomerIDinput = new JTextField(20);
-        newRentalCustomerIDinput.setBounds((width/2) - 82, (height/2) - 100, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalCustomerIDinput.setBounds((width/2) - 82, (height/2)-75, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalCustomerIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalCustomerIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
         panel.add(newRentalCustomerIDinput);
 
-        newRentalDateRentedinput = new JTextField(20);
-        newRentalDateRentedinput.setBounds((width/2) - 82, (height/2), 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        panel.add(newRentalDateRentedinput);
+        newRentalDateRentedYearinput = new JTextField(4);
+        newRentalDateRentedYearinput.setBounds((width/2) - 82, (height/2) -25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateRentedYearinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateRentedYearinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateRentedYearinput);
 
-        newRentalDateDueinput = new JTextField(20);
-        newRentalDateDueinput.setBounds((width/2) - 82, (height/2) + 50, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        panel.add(newRentalDateDueinput);
+        newRentalDateRentedDayinput = new JTextField(2);
+        newRentalDateRentedDayinput.setBounds((width/2) - 27, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateRentedDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateRentedDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateRentedDayinput);
+
+        newRentalDateRentedMonthinput = new JTextField(2);
+        newRentalDateRentedMonthinput.setBounds((width/2) + 28, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateRentedMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateRentedMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateRentedMonthinput);
+
+        newRentalDateDueYearinput = new JTextField(4);
+        newRentalDateDueYearinput.setBounds((width/2) - 82, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateDueYearinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateDueYearinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateDueYearinput);
+
+        newRentalDateDueDayinput = new JTextField(2);
+        newRentalDateDueDayinput.setBounds((width/2) - 27, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateDueDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateDueDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateDueDayinput);
+
+        newRentalDateDueMonthinput = new JTextField(2);
+        newRentalDateDueMonthinput.setBounds((width/2) + 28, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateDueMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateDueMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateDueMonthinput);
+
+        AddRental = new JButton("Add Rental");
+        AddRental.setBounds((width/2) - 100, (height/2) + 125, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        AddRental.addActionListener(new Main());
+        panel.add(AddRental);
 
         ReturnToMenu = new JButton("Return to Main Menu");
         ReturnToMenu.setBounds((width/2) - 100, (height/2) + 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
@@ -345,27 +437,27 @@ public class Main implements ActionListener {
 
         JLabel tempRentalID;
         tempRentalID = new JLabel("Current RentalID: "+tempRental.getRentalID(), SwingConstants.CENTER);
-        tempRentalID.setBounds(-280, (height/2) - 200, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        tempRentalID.setBounds(-320, (height/2) - 175, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(tempRentalID);
 
         JLabel tempCustomerID;
         tempCustomerID = new JLabel("Current CustomerID: "+tempRental.getCustomerID(), SwingConstants.CENTER);
-        tempCustomerID.setBounds(-270, (height/2) - 150, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        tempCustomerID.setBounds(-310, (height/2) - 125, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(tempCustomerID);
 
         JLabel tempMovieID;
         tempMovieID = new JLabel("Current MovieID: "+tempRental.getMovieID(), SwingConstants.CENTER);
-        tempMovieID.setBounds(-280, (height/2) - 100, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        tempMovieID.setBounds(-320, (height/2) - 75, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(tempMovieID);
 
         JLabel tempDateRented;
-        tempDateRented = new JLabel("Current Date Rented: "+tempRental.getDateRented(), SwingConstants.CENTER);
-        tempDateRented.setBounds(-250, (height/2) - 50, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        tempDateRented = new JLabel("(YYYY-DD-MM) Current Date Rented: "+tempRental.getDateRented(), SwingConstants.CENTER);
+        tempDateRented.setBounds(-250, (height/2) - 25, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(tempDateRented);
 
         JLabel tempDateDue;
-        tempDateDue = new JLabel("Current Date Due: "+tempRental.getDateDue(), SwingConstants.CENTER);
-        tempDateDue.setBounds(-259, (height/2), width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        tempDateDue = new JLabel("(YYYY-DD-MM) Current Date Due: "+tempRental.getDateDue(), SwingConstants.CENTER);
+        tempDateDue.setBounds(-259, (height/2) + 25, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(tempDateDue);
 
         JLabel rentalID;
@@ -384,34 +476,118 @@ public class Main implements ActionListener {
         panel.add(customerID);
 
         JLabel dateRented;
-        dateRented = new JLabel("New Date Rented:", SwingConstants.CENTER);
+        dateRented = new JLabel("(YYYY-DD-MM) New Date Rented:", SwingConstants.CENTER);
         dateRented.setBounds(0, (height/2) -50, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(dateRented);
 
         JLabel dateDue;
-        dateDue = new JLabel("New Date Due:", SwingConstants.CENTER);
+        dateDue = new JLabel("(YYYY-DD-MM) New Date Due:", SwingConstants.CENTER);
         dateDue.setBounds(0, (height/2), width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(dateDue);
 
         newRentalRentalIDinput = new JTextField(20);
         newRentalRentalIDinput.setBounds((width/2) - 82, (height/2) - 175, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalRentalIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalRentalIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
         panel.add(newRentalRentalIDinput);
 
         newRentalMovieIDinput = new JTextField(20);
         newRentalMovieIDinput.setBounds((width/2) - 82, (height/2) - 125, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalMovieIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalMovieIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
         panel.add(newRentalMovieIDinput);
 
         newRentalCustomerIDinput = new JTextField(20);
         newRentalCustomerIDinput.setBounds((width/2) - 82, (height/2)-75, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalCustomerIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalCustomerIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
         panel.add(newRentalCustomerIDinput);
 
-        newRentalDateRentedinput = new JTextField(20);
-        newRentalDateRentedinput.setBounds((width/2) - 82, (height/2) -25, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        panel.add(newRentalDateRentedinput);
+        newRentalDateRentedYearinput = new JTextField(4);
+        newRentalDateRentedYearinput.setBounds((width/2) - 82, (height/2) -25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateRentedYearinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateRentedYearinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateRentedYearinput);
 
-        newRentalDateDueinput = new JTextField(20);
-        newRentalDateDueinput.setBounds((width/2) - 82, (height/2) + 25, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        panel.add(newRentalDateDueinput);
+        newRentalDateRentedDayinput = new JTextField(2);
+        newRentalDateRentedDayinput.setBounds((width/2) - 27, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateRentedDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateRentedDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateRentedDayinput);
+
+        newRentalDateRentedMonthinput = new JTextField(2);
+        newRentalDateRentedMonthinput.setBounds((width/2) + 28, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateRentedMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateRentedMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateRentedMonthinput);
+
+        newRentalDateDueYearinput = new JTextField(4);
+        newRentalDateDueYearinput.setBounds((width/2) - 82, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateDueYearinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateDueYearinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateDueYearinput);
+
+        newRentalDateDueDayinput = new JTextField(2);
+        newRentalDateDueDayinput.setBounds((width/2) - 27, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateDueDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateDueDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateDueDayinput);
+
+        newRentalDateDueMonthinput = new JTextField(2);
+        newRentalDateDueMonthinput.setBounds((width/2) + 28, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateDueMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateDueMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateDueMonthinput);
+
+        AddRental = new JButton("Update Rental");
+        AddRental.setBounds((width/2) - 100, (height/2) + 125, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        AddRental.addActionListener(new Main());
+        panel.add(AddRental);
 
         ReturnToMenu = new JButton("Return to Main Menu");
         ReturnToMenu.setBounds((width/2) - 100, (height/2) + 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
@@ -782,6 +958,12 @@ public class Main implements ActionListener {
         else if ((actionEvent.toString()).contains("cmd=Clear")) {
             Display.setModel(model);
             Display.repaint();
+        }
+        else if ((actionEvent.toString()).contains("cmd=Add Rental")) {
+            Rentals newRental = new Rentals(Integer.parseInt(newRentalRentalIDinput.getText()), Integer.parseInt(newRentalCustomerIDinput.getText()), Integer.parseInt(newRentalMovieIDinput.getText()), new Date(Integer.parseInt(newRentalDateRentedYearinput.getText())-1900, Integer.parseInt(newRentalDateRentedMonthinput.getText())-1, Integer.parseInt(newRentalDateRentedDayinput.getText())), new Date(Integer.parseInt(newRentalDateDueYearinput.getText())-1900, Integer.parseInt(newRentalDateDueMonthinput.getText())-1, Integer.parseInt(newRentalDateDueDayinput.getText())));
+            RentalList.add(newRental);
+            Display = new JTable(model = new RentalsTableModel(RentalList));
+            newRental();
         }
     }
 }
