@@ -732,13 +732,13 @@ public class Main implements ActionListener {
             newRental();
         }
         else if ((actionEvent.toString()).contains("cmd=Edit Selected Rental")) {
-            tempRental.setRentalID((Integer) model.getValueAt(Display.getSelectedRow(), 0));
-            tempRental.setCustomerID((Integer) model.getValueAt(Display.getSelectedRow(), 1));
-            tempRental.setMovieID((Integer) model.getValueAt(Display.getSelectedRow(), 2));
-            tempRental.setDateRented((java.util.Date) model.getValueAt(Display.getSelectedRow(), 3));
-            tempRental.setDateDue((java.util.Date) model.getValueAt(Display.getSelectedRow(), 4));
+            tempRental.setRentalID((Integer) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 0));
+            tempRental.setCustomerID((Integer) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 1));
+            tempRental.setMovieID((Integer) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 2));
+            tempRental.setDateRented((java.util.Date) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 3));
+            tempRental.setDateDue((java.util.Date) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 4));
 
-            System.out.println("" + tempRental.getRentalID() + "\n" + tempRental.getCustomerID() + "\n" +  tempRental.getMovieID() + "\n" + tempRental.getDateRented() + "\n" + tempRental.getDateDue());
+            //System.out.println("" + tempRental.getRentalID() + "\n" + tempRental.getCustomerID() + "\n" +  tempRental.getMovieID() + "\n" + tempRental.getDateRented() + "\n" + tempRental.getDateDue());
             editRentals();
         }
         else if ((actionEvent.toString()).contains("cmd=Delete Selected Rental")) {
