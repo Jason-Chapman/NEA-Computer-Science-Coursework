@@ -695,11 +695,11 @@ public class Main implements ActionListener {
             }
         });
 
-        JButton Update;
-        Update = new JButton("Update");
-        Update.setBounds((width/2) - 100, (height/2) + 75, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        Update.addActionListener(new Main());
-        panel.add(Update);
+        JButton Apply;
+        Apply = new JButton("Apply");
+        Apply.setBounds((width/2) - 100, (height/2) + 75, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        Apply.addActionListener(new Main());
+        panel.add(Apply);
 
         JButton Reset;
         Reset = new JButton("Reset Selected");
@@ -737,8 +737,6 @@ public class Main implements ActionListener {
             tempRental.setMovieID((Integer) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 2));
             tempRental.setDateRented((java.util.Date) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 3));
             tempRental.setDateDue((java.util.Date) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 4));
-
-            //System.out.println("" + tempRental.getRentalID() + "\n" + tempRental.getCustomerID() + "\n" +  tempRental.getMovieID() + "\n" + tempRental.getDateRented() + "\n" + tempRental.getDateDue());
             editRentals();
         }
         else if ((actionEvent.toString()).contains("cmd=Delete Selected Rental")) {
@@ -882,7 +880,19 @@ public class Main implements ActionListener {
                 tables.setFont("MONOSPACED");
             }
         }
-        else if ((actionEvent.toString()).contains("cmd=Update")) {
+        else if ((actionEvent.toString()).contains("cmd=Update Rental")) {
+            RentalList.get(RentalList.indexOf(tempRental)).setRentalID(Integer.parseInt(newRentalRentalIDinput.getText()));
+            RentalList.get(RentalList.indexOf(tempRental)).setCustomerID(Integer.parseInt(newRentalCustomerIDinput.getText()));
+            RentalList.get(RentalList.indexOf(tempRental)).setMovieID(Integer.parseInt(newRentalMovieIDinput.getText()));
+
+            newRentalDateRentedYearinput.getText();
+            newRentalDateRentedMonthinput.getText();
+            newRentalDateRentedDayinput.getText();
+            newRentalDateDueYearinput.getText();
+            newRentalDateDueMonthinput.getText();
+            newRentalDateDueDayinput.getText();
+        }
+        else if ((actionEvent.toString()).contains("cmd=Apply")) {
             if (Type == "Label") {
                 UIManager.put(Type+".font", new FontUIResource(labels.getFont(), Font.BOLD, labels.fontSize));
             } else if (Type == "Button") {
