@@ -67,15 +67,45 @@ public class Main implements ActionListener {
     public static String Username;
     public static String Password;
     public static int AccessLevel;
+    public static String ConnectionURL = "jdbc:sqlserver://movierentalserver.database.windows.net:1433;database=movieRentalDatabase;user=jc210762@movierentalserver;password={Cooper27};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
 
-    public static void main(String[] args) {
-        String ConnectionURL = "jdbc:sqlserver://movierentalserver.database.windows.net:1433;database=movieRentalDatabase;user=jc210762@movierentalserver;password={Cooper27};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+    public static void databaseDownload() {
         ResultSet rs;
 
         // Open a connection
         try(Connection conn = DriverManager.getConnection(ConnectionURL);
             Statement stmt = conn.createStatement();
         ) {
+
+            int RentalID = 999;
+            int CustomerID, MovieID;
+            int Yrented, Mrented, Drented, Ydue, Mdue, Ddue;
+            for (int i = 1; i < 51; i++) {
+                Yrented = random.nextInt(2)+2022;
+                Mrented = random.nextInt(12-1)+1;
+                Drented = random.nextInt(28-1)+1;
+                Ydue = random.nextInt(2)+2022;
+                Mdue = random.nextInt(12-1)+1;
+                Ddue = random.nextInt(28-1)+1;
+                while (Ydue < Yrented) {
+                    Yrented = random.nextInt(2023-2022)+2022;
+                    Ydue = random.nextInt(2023-2022)+2022;
+                }
+                while (Ydue == Yrented && Mdue < Mrented) {
+                    Mrented = random.nextInt(12-1)+1;
+                    Mdue = random.nextInt(12-1)+1;
+                }
+                while (Ydue == Yrented && Mdue == Mrented && Ddue < Drented) {
+                    Drented = random.nextInt(28-1)+1;
+                    Ddue = random.nextInt(28-1)+1;
+                }
+
+                RentalID++;
+                CustomerID = random.nextInt(1049-1000)+1000;
+                MovieID = random.nextInt(1049-1001)+1001;
+                stmt.execute("INSERT INTO [dbo].[Rentals] VALUES ("+RentalID+", "+CustomerID+", "+MovieID+", '"+Yrented+"-"+Mrented+"-"+Drented+"', '"+Ydue+"-"+Mdue+"-"+Ddue+"')");
+            }
+
             rs = stmt.executeQuery("SELECT Username, Password, AccessLevel FROM [dbo].[tblEmployees]");
 
             while (rs.next()) {
@@ -94,64 +124,50 @@ public class Main implements ActionListener {
                 rental.setDateDue(rs.getDate(5));
                 RentalList.add(rental);
             }
-            
+
             rs = stmt.executeQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'Rentals'");
             while (rs.next()) {
                 Columns.add(rs.getString(1));
             }
-
-//            GENERATES RECORDS FOR RENTAL TABLE IN DATABASE
-//======================================================================================================================================================================================
-//            int RentalID = 999;
-//            int CustomerID, MovieID;
-//            int Yrented, Mrented, Drented, Ydue, Mdue, Ddue;
-//            for (int i = 1; i < 51; i++) {
-//                Yrented = random.nextInt(2)+2022;
-//                Mrented = random.nextInt(12-1)+1;
-//                Drented = random.nextInt(28-1)+1;
-//                Ydue = random.nextInt(2)+2022;
-//                Mdue = random.nextInt(12-1)+1;
-//                Ddue = random.nextInt(28-1)+1;
-//                while (Ydue < Yrented) {
-//                    Yrented = random.nextInt(2023-2022)+2022;
-//                    Ydue = random.nextInt(2023-2022)+2022;
-//                }
-//                while (Ydue == Yrented && Mdue < Mrented) {
-//                    Mrented = random.nextInt(12-1)+1;
-//                    Mdue = random.nextInt(12-1)+1;
-//                }
-//                while (Ydue == Yrented && Mdue == Mrented && Ddue < Drented) {
-//                    Drented = random.nextInt(28-1)+1;
-//                    Ddue = random.nextInt(28-1)+1;
-//                }
-//
-//                RentalID++;
-//                CustomerID = random.nextInt(1049-1000)+1000;
-//                MovieID = random.nextInt(1049-1001)+1001;
-//                stmt.execute("INSERT INTO [dbo].[Rentals] VALUES ("+RentalID+", "+CustomerID+", "+MovieID+", '"+Yrented+"-"+Mrented+"-"+Drented+"', '"+Ydue+"-"+Mdue+"-"+Ddue+"')");
-//            }
-//======================================================================================================================================================================================
-
-
-//            GENERATES RECORDS FOR CUSTOMER TABLE IN DATABASE
-//==========================================================================================================================================================
-//            String PhoneNumber;
-//            int CustomerID = 999;
-//            String Name;
-//            for (int i = 1; i < 51; i++) {
-//                PhoneNumber = ""+Integer.toString(random.nextInt(99999 - 10000)+10000)+" "+Integer.toString(random.nextInt(999999 - 100000)+100000)+"";
-//                CustomerID++;
-//                Name = "CustomerName"+i+"".toString();
-//                stmt.execute("INSERT INTO [dbo].[tblCustomers] VALUES ("+CustomerID+", '"+Name+"', '"+PhoneNumber+"')");
-//            }
-//==========================================================================================================================================================
-
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
         Display = new JTable(model = new RentalsTableModel(RentalList));
+    }
+
+    public static void databaseOverwrite() {
+        // Open a connection
+        try(Connection conn = DriverManager.getConnection(ConnectionURL);
+            Statement stmt = conn.createStatement();
+        ) {
+            stmt.executeUpdate("TRUNCATE TABLE [dbo].[Rentals]");
+
+            for (int i = 0; i < RentalList.size(); i++) {
+                System.out.println(RentalList.get(i).getRentalID());
+                System.out.println(RentalList.get(i).getCustomerID());
+                System.out.println(RentalList.get(i).getMovieID());
+                System.out.println(RentalList.get(i).getDateRented());
+                System.out.println(RentalList.get(i).getDateDue());
+
+                stmt.executeUpdate(
+                        "INSERT INTO [dbo].[Rentals](RentalID, CustomerID, MovieID, DateRented, DateDue) " +
+                        "VALUES("+RentalList.get(i).getRentalID()+", " +
+                        ""+RentalList.get(i).getCustomerID()+", " +
+                        ""+RentalList.get(i).getMovieID()+", " +
+                        ""+RentalList.get(i).getDateRented()+", " +
+                        ""+RentalList.get(i).getDateDue()+")"
+                );
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        databaseDownload();
 
         frame.setSize(width, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -735,8 +751,8 @@ public class Main implements ActionListener {
             tempRental.setRentalID((Integer) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 0));
             tempRental.setCustomerID((Integer) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 1));
             tempRental.setMovieID((Integer) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 2));
-            tempRental.setDateRented((java.util.Date) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 3));
-            tempRental.setDateDue((java.util.Date) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 4));
+            tempRental.setDateRented((java.sql.Date) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 3));
+            tempRental.setDateDue((java.sql.Date) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 4));
             editRentals();
         }
         else if ((actionEvent.toString()).contains("cmd=Delete Selected Rental")) {
@@ -881,16 +897,36 @@ public class Main implements ActionListener {
             }
         }
         else if ((actionEvent.toString()).contains("cmd=Update Rental")) {
-            RentalList.get(RentalList.indexOf(tempRental)).setRentalID(Integer.parseInt(newRentalRentalIDinput.getText()));
-            RentalList.get(RentalList.indexOf(tempRental)).setCustomerID(Integer.parseInt(newRentalCustomerIDinput.getText()));
-            RentalList.get(RentalList.indexOf(tempRental)).setMovieID(Integer.parseInt(newRentalMovieIDinput.getText()));
+            databaseOverwrite();
 
-            newRentalDateRentedYearinput.getText();
-            newRentalDateRentedMonthinput.getText();
-            newRentalDateRentedDayinput.getText();
-            newRentalDateDueYearinput.getText();
-            newRentalDateDueMonthinput.getText();
-            newRentalDateDueDayinput.getText();
+            Date tempDateRented = null;
+            tempDateRented.setYear(Integer.parseInt(newRentalDateRentedYearinput.getText()));
+            tempDateRented.setMonth(Integer.parseInt(newRentalDateRentedMonthinput.getText()));
+            tempDateRented.setDate(Integer.parseInt(newRentalDateRentedDayinput.getText()));
+
+            Date tempDateDue = null;
+            tempDateDue.setYear(Integer.parseInt(newRentalDateDueYearinput.getText()));
+            tempDateDue.setMonth(Integer.parseInt(newRentalDateDueMonthinput.getText()));
+            tempDateDue.setDate(Integer.parseInt(newRentalDateDueDayinput.getText()));
+
+            // Open a connection
+            try(Connection conn = DriverManager.getConnection(ConnectionURL);
+                Statement stmt = conn.createStatement();
+            ) {
+                stmt.executeUpdate("UPDATE [dbo].[Rentals] SET " +
+                        "RentalID = "+newRentalRentalIDinput.getText()+", " +
+                        "CustomerID = "+newRentalCustomerIDinput.getText()+" " +
+                        "MovieID = "+newRentalMovieIDinput.getText()+" " +
+                        "DateRented = "+tempDateRented+" " +
+                        "DateDue = "+tempDateDue+" " +
+                        "WHERE RentalID = "+tempRental.getRentalID());
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            databaseDownload();
+            editRentals();
         }
         else if ((actionEvent.toString()).contains("cmd=Apply")) {
             if (Type == "Label") {
@@ -977,3 +1013,48 @@ public class Main implements ActionListener {
         }
     }
 }
+//            GENERATES RECORDS FOR RENTAL TABLE IN DATABASE
+//======================================================================================================================================================================================
+//            int RentalID = 999;
+//            int CustomerID, MovieID;
+//            int Yrented, Mrented, Drented, Ydue, Mdue, Ddue;
+//            for (int i = 1; i < 51; i++) {
+//                Yrented = random.nextInt(2)+2022;
+//                Mrented = random.nextInt(12-1)+1;
+//                Drented = random.nextInt(28-1)+1;
+//                Ydue = random.nextInt(2)+2022;
+//                Mdue = random.nextInt(12-1)+1;
+//                Ddue = random.nextInt(28-1)+1;
+//                while (Ydue < Yrented) {
+//                    Yrented = random.nextInt(2023-2022)+2022;
+//                    Ydue = random.nextInt(2023-2022)+2022;
+//                }
+//                while (Ydue == Yrented && Mdue < Mrented) {
+//                    Mrented = random.nextInt(12-1)+1;
+//                    Mdue = random.nextInt(12-1)+1;
+//                }
+//                while (Ydue == Yrented && Mdue == Mrented && Ddue < Drented) {
+//                    Drented = random.nextInt(28-1)+1;
+//                    Ddue = random.nextInt(28-1)+1;
+//                }
+//
+//                RentalID++;
+//                CustomerID = random.nextInt(1049-1000)+1000;
+//                MovieID = random.nextInt(1049-1001)+1001;
+//                stmt.execute("INSERT INTO [dbo].[Rentals] VALUES ("+RentalID+", "+CustomerID+", "+MovieID+", '"+Yrented+"-"+Mrented+"-"+Drented+"', '"+Ydue+"-"+Mdue+"-"+Ddue+"')");
+//            }
+//======================================================================================================================================================================================
+
+
+//            GENERATES RECORDS FOR CUSTOMER TABLE IN DATABASE
+//==========================================================================================================================================================
+//            String PhoneNumber;
+//            int CustomerID = 999;
+//            String Name;
+//            for (int i = 1; i < 51; i++) {
+//                PhoneNumber = ""+Integer.toString(random.nextInt(99999 - 10000)+10000)+" "+Integer.toString(random.nextInt(999999 - 100000)+100000)+"";
+//                CustomerID++;
+//                Name = "CustomerName"+i+"".toString();
+//                stmt.execute("INSERT INTO [dbo].[tblCustomers] VALUES ("+CustomerID+", '"+Name+"', '"+PhoneNumber+"')");
+//            }
+//==========================================================================================================================================================

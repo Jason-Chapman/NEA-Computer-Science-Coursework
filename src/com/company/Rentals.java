@@ -6,10 +6,10 @@ public class Rentals {
     protected int RentalID;
     protected int CustomerID;
     protected int MovieID;
-    protected Date DateRented;
-    protected Date DateDue;
+    protected java.sql.Date DateRented;
+    protected java.sql.Date DateDue;
 
-    public Rentals(int rentalID, int customerID, int movieID, Date dateRented, Date dateDue) {
+    public Rentals(int rentalID, int customerID, int movieID, java.sql.Date dateRented, java.sql.Date dateDue) {
         RentalID = rentalID;
         CustomerID = customerID;
         MovieID = movieID;
@@ -41,19 +41,19 @@ public class Rentals {
         MovieID = movieID;
     }
 
-    public Date getDateRented() {
+    public java.sql.Date getDateRented() {
         return DateRented;
     }
 
-    public void setDateRented(Date dateRented) {
+    public void setDateRented(java.sql.Date dateRented) {
         DateRented = dateRented;
     }
 
-    public Date getDateDue() {
+    public java.sql.Date getDateDue() {
         return DateDue;
     }
 
-    public void setDateDue(Date dateDue) {
+    public void setDateDue(java.sql.Date dateDue) {
         DateDue = dateDue;
     }
 }
