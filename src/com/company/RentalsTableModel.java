@@ -23,7 +23,7 @@ public class RentalsTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int col) {
-        return (col == 3 || col == 4) ? Date.class : Integer.class;
+        return (col == 3 || col == 4) ? java.sql.Date.class : Integer.class;
     }
 
     @Override

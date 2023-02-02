@@ -37,7 +37,6 @@ public class Main implements ActionListener {
     public static JButton SERIF;
     public static JButton MONOSPACED;
     public static JButton AddRental;
-    public static JButton UpdateRental;
     public static JSlider fontSize;
     public static ArrayList<Rentals> RentalList = new ArrayList<Rentals>();
     public static ArrayList<String> Columns = new ArrayList<String>();
@@ -76,36 +75,6 @@ public class Main implements ActionListener {
         try(Connection conn = DriverManager.getConnection(ConnectionURL);
             Statement stmt = conn.createStatement();
         ) {
-
-            int RentalID = 999;
-            int CustomerID, MovieID;
-            int Yrented, Mrented, Drented, Ydue, Mdue, Ddue;
-            for (int i = 1; i < 51; i++) {
-                Yrented = random.nextInt(2)+2022;
-                Mrented = random.nextInt(12-1)+1;
-                Drented = random.nextInt(28-1)+1;
-                Ydue = random.nextInt(2)+2022;
-                Mdue = random.nextInt(12-1)+1;
-                Ddue = random.nextInt(28-1)+1;
-                while (Ydue < Yrented) {
-                    Yrented = random.nextInt(2023-2022)+2022;
-                    Ydue = random.nextInt(2023-2022)+2022;
-                }
-                while (Ydue == Yrented && Mdue < Mrented) {
-                    Mrented = random.nextInt(12-1)+1;
-                    Mdue = random.nextInt(12-1)+1;
-                }
-                while (Ydue == Yrented && Mdue == Mrented && Ddue < Drented) {
-                    Drented = random.nextInt(28-1)+1;
-                    Ddue = random.nextInt(28-1)+1;
-                }
-
-                RentalID++;
-                CustomerID = random.nextInt(1049-1000)+1000;
-                MovieID = random.nextInt(1049-1001)+1001;
-                stmt.execute("INSERT INTO [dbo].[Rentals] VALUES ("+RentalID+", "+CustomerID+", "+MovieID+", '"+Yrented+"-"+Mrented+"-"+Drented+"', '"+Ydue+"-"+Mdue+"-"+Ddue+"')");
-            }
-
             rs = stmt.executeQuery("SELECT Username, Password, AccessLevel FROM [dbo].[tblEmployees]");
 
             while (rs.next()) {
@@ -145,20 +114,13 @@ public class Main implements ActionListener {
             stmt.executeUpdate("TRUNCATE TABLE [dbo].[Rentals]");
 
             for (int i = 0; i < RentalList.size(); i++) {
-                System.out.println(RentalList.get(i).getRentalID());
-                System.out.println(RentalList.get(i).getCustomerID());
-                System.out.println(RentalList.get(i).getMovieID());
-                System.out.println(RentalList.get(i).getDateRented());
-                System.out.println(RentalList.get(i).getDateDue());
+                int a = RentalList.get(i).getRentalID();
+                int b = RentalList.get(i).getCustomerID();
+                int c = RentalList.get(i).getMovieID();
+                java.sql.Date d = RentalList.get(i).getDateRented();
+                java.sql.Date e = RentalList.get(i).getDateDue();
 
-                stmt.executeUpdate(
-                        "INSERT INTO [dbo].[Rentals](RentalID, CustomerID, MovieID, DateRented, DateDue) " +
-                        "VALUES("+RentalList.get(i).getRentalID()+", " +
-                        ""+RentalList.get(i).getCustomerID()+", " +
-                        ""+RentalList.get(i).getMovieID()+", " +
-                        ""+RentalList.get(i).getDateRented()+", " +
-                        ""+RentalList.get(i).getDateDue()+")"
-                );
+                stmt.executeUpdate("INSERT INTO [dbo].[Rentals](RentalID, CustomerID, MovieID, DateRented, DateDue) VALUES("+RentalList.get(i).getRentalID()+", "+RentalList.get(i).getCustomerID()+", "+RentalList.get(i).getMovieID()+", \'"+RentalList.get(i).getDateRented()+"\', \'"+RentalList.get(i).getDateDue()+"\')");
             }
         }
         catch (SQLException e) {
@@ -483,12 +445,12 @@ public class Main implements ActionListener {
 
         JLabel movieID;
         movieID = new JLabel("New MovieID:", SwingConstants.CENTER);
-        movieID.setBounds(0, (height/2) - 150, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        movieID.setBounds(0, (height/2) - 100, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(movieID);
 
         JLabel customerID;
         customerID = new JLabel("New CustomerID:", SwingConstants.CENTER);
-        customerID.setBounds(0, (height/2) -100, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        customerID.setBounds(0, (height/2) -150, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(customerID);
 
         JLabel dateRented;
@@ -513,7 +475,7 @@ public class Main implements ActionListener {
         panel.add(newRentalRentalIDinput);
 
         newRentalMovieIDinput = new JTextField(20);
-        newRentalMovieIDinput.setBounds((width/2) - 82, (height/2) - 125, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalMovieIDinput.setBounds((width/2) - 82, (height/2) - 75, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         newRentalMovieIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalMovieIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
@@ -524,7 +486,7 @@ public class Main implements ActionListener {
         panel.add(newRentalMovieIDinput);
 
         newRentalCustomerIDinput = new JTextField(20);
-        newRentalCustomerIDinput.setBounds((width/2) - 82, (height/2)-75, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalCustomerIDinput.setBounds((width/2) - 82, (height/2)-125, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         newRentalCustomerIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalCustomerIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
@@ -899,15 +861,13 @@ public class Main implements ActionListener {
         else if ((actionEvent.toString()).contains("cmd=Update Rental")) {
             databaseOverwrite();
 
-            Date tempDateRented = null;
-            tempDateRented.setYear(Integer.parseInt(newRentalDateRentedYearinput.getText()));
-            tempDateRented.setMonth(Integer.parseInt(newRentalDateRentedMonthinput.getText()));
-            tempDateRented.setDate(Integer.parseInt(newRentalDateRentedDayinput.getText()));
+            java.sql.Date tempDateRented = null;
+            tempDateRented.valueOf(""+newRentalDateRentedYearinput.getText()+"-"+newRentalDateRentedMonthinput.getText()+"-"+newRentalDateRentedDayinput.getText()+"");
 
-            Date tempDateDue = null;
-            tempDateDue.setYear(Integer.parseInt(newRentalDateDueYearinput.getText()));
-            tempDateDue.setMonth(Integer.parseInt(newRentalDateDueMonthinput.getText()));
-            tempDateDue.setDate(Integer.parseInt(newRentalDateDueDayinput.getText()));
+            System.out.println(newRentalDateRentedYearinput.getText()+"-"+newRentalDateRentedMonthinput.getText()+"-"+newRentalDateRentedDayinput.getText());
+
+            java.sql.Date tempDateDue = null;
+            tempDateDue.valueOf(""+newRentalDateDueYearinput.getText()+"-"+newRentalDateDueMonthinput.getText()+"-"+newRentalDateDueDayinput.getText()+"");
 
             // Open a connection
             try(Connection conn = DriverManager.getConnection(ConnectionURL);
@@ -915,11 +875,10 @@ public class Main implements ActionListener {
             ) {
                 stmt.executeUpdate("UPDATE [dbo].[Rentals] SET " +
                         "RentalID = "+newRentalRentalIDinput.getText()+", " +
-                        "CustomerID = "+newRentalCustomerIDinput.getText()+" " +
-                        "MovieID = "+newRentalMovieIDinput.getText()+" " +
-                        "DateRented = "+tempDateRented+" " +
-                        "DateDue = "+tempDateDue+" " +
-                        "WHERE RentalID = "+tempRental.getRentalID());
+                        "CustomerID = "+newRentalCustomerIDinput.getText()+", " +
+                        "MovieID = "+newRentalMovieIDinput.getText()+", " +
+                        "DateRented = "+tempDateRented+", " +
+                        "DateDue = "+tempDateDue+" WHERE RentalID = "+tempRental.getRentalID());
             }
             catch (SQLException e) {
                 e.printStackTrace();
