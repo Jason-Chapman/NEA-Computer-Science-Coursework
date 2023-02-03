@@ -12,6 +12,8 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -21,7 +23,6 @@ public class Main implements ActionListener {
     public static JFrame frame = new JFrame();
     public static Random random = new Random();
 
-    public static SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
     public static Rentals tempRental = new Rentals(0, 0, 0, null, null);
     public static JTextField searchBar;
@@ -41,7 +42,7 @@ public class Main implements ActionListener {
     public static ArrayList<Rentals> RentalList = new ArrayList<Rentals>();
     public static ArrayList<String> Columns = new ArrayList<String>();
     public static RentalsTableModel model;
-    public static JTable Display;
+    public static JTable table;
     public static JTextField newRentalRentalIDinput;
     public static JTextField newRentalMovieIDinput;
     public static JTextField newRentalCustomerIDinput;
@@ -51,7 +52,7 @@ public class Main implements ActionListener {
     public static JTextField newRentalDateDueYearinput;
     public static JTextField newRentalDateDueMonthinput;
     public static JTextField newRentalDateDueDayinput;
-    private TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(Display.getModel());
+    private TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(table.getModel());
 
     public static Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
     public static int width = resolution.width;
@@ -70,6 +71,7 @@ public class Main implements ActionListener {
 
     public static void databaseDownload() {
         ResultSet rs;
+        RentalList.clear();
 
         // Open a connection
         try(Connection conn = DriverManager.getConnection(ConnectionURL);
@@ -103,7 +105,7 @@ public class Main implements ActionListener {
             e.printStackTrace();
         }
 
-        Display = new JTable(model = new RentalsTableModel(RentalList));
+        table = new JTable(model = new RentalsTableModel(RentalList));
     }
 
     public static void databaseOverwrite() {
@@ -128,6 +130,16 @@ public class Main implements ActionListener {
         }
     }
 
+    public static TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
+        SimpleDateFormat f = new SimpleDateFormat("YYYY-MM-DD");
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value instanceof Date) {
+                value = f.format(value);
+            }
+            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        }
+    };
+
     public static void main(String[] args) {
         databaseDownload();
 
@@ -140,9 +152,11 @@ public class Main implements ActionListener {
         UIManager.put(Type + ".font", new FontUIResource("SANS_SERIF", Font.BOLD, 12));
         UIManager.put(Type + ".font", new FontUIResource("SANS_SERIF", Font.BOLD, 12));
         UIManager.put(Type + ".font", new FontUIResource("SANS_SERIF", Font.BOLD, 12));
-        Display.setFont(new FontUIResource("SANS_SERIF", Font.PLAIN, 12));
-        Display.setRowHeight(12);
-        Display.getTableHeader().setFont(new Font("SANS_SERIF", Font.BOLD, 12));
+        table.setFont(new FontUIResource("SANS_SERIF", Font.PLAIN, 12));
+        table.setRowHeight(12);
+        table.getTableHeader().setFont(new Font("SANS_SERIF", Font.BOLD, 12));
+        table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
+        table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
 
         login();
     }
@@ -202,12 +216,12 @@ public class Main implements ActionListener {
         Clear.addActionListener(new Main());
         panel.add(Clear);
 
-        JScrollPane scrollPane = new JScrollPane(Display);
+        JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBounds(0, 75, width-15, height-120); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        Display.setFillsViewportHeight(true);
-        Display.setPreferredScrollableViewportSize(new Dimension(width, height-50));
-        Display.setAutoCreateRowSorter(true);
-        Display.setRowSorter(rowSorter);
+        table.setFillsViewportHeight(true);
+        table.setPreferredScrollableViewportSize(new Dimension(width, height-50));
+        table.setAutoCreateRowSorter(true);
+        table.setRowSorter(rowSorter);
         panel.add(scrollPane);
 
 //
@@ -241,11 +255,6 @@ public class Main implements ActionListener {
 //            }
 //
 //        });
-
-        JLabel welcomeLabel;
-        welcomeLabel = new JLabel("Welcome to the Rental System!", SwingConstants.CENTER);
-        welcomeLabel.setBounds(0, (height/2) - 200, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        panel.add(welcomeLabel);
 
         NewRental = new JButton("Create New Rental");
         NewRental.setBounds(0, 0, width/4, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
@@ -429,12 +438,12 @@ public class Main implements ActionListener {
         panel.add(tempMovieID);
 
         JLabel tempDateRented;
-        tempDateRented = new JLabel("(YYYY-DD-MM) Current Date Rented: "+tempRental.getDateRented(), SwingConstants.CENTER);
+        tempDateRented = new JLabel("(YYYY-MM-DD) Current Date Rented: "+tempRental.getDateRented(), SwingConstants.CENTER);
         tempDateRented.setBounds(-250, (height/2) - 25, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(tempDateRented);
 
         JLabel tempDateDue;
-        tempDateDue = new JLabel("(YYYY-DD-MM) Current Date Due: "+tempRental.getDateDue(), SwingConstants.CENTER);
+        tempDateDue = new JLabel("(YYYY-MM-DD) Current Date Due: "+tempRental.getDateDue(), SwingConstants.CENTER);
         tempDateDue.setBounds(-259, (height/2) + 25, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(tempDateDue);
 
@@ -454,12 +463,12 @@ public class Main implements ActionListener {
         panel.add(customerID);
 
         JLabel dateRented;
-        dateRented = new JLabel("(YYYY-DD-MM) New Date Rented:", SwingConstants.CENTER);
+        dateRented = new JLabel("(YYYY-MM-DD) New Date Rented:", SwingConstants.CENTER);
         dateRented.setBounds(0, (height/2) -50, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(dateRented);
 
         JLabel dateDue;
-        dateDue = new JLabel("(YYYY-DD-MM) New Date Due:", SwingConstants.CENTER);
+        dateDue = new JLabel("(YYYY-MM-DD) New Date Due:", SwingConstants.CENTER);
         dateDue.setBounds(0, (height/2), width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(dateDue);
 
@@ -508,7 +517,7 @@ public class Main implements ActionListener {
         panel.add(newRentalDateRentedYearinput);
 
         newRentalDateRentedDayinput = new JTextField(2);
-        newRentalDateRentedDayinput.setBounds((width/2) - 27, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateRentedDayinput.setBounds((width/2) + 28, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         newRentalDateRentedDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateRentedDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
@@ -519,7 +528,7 @@ public class Main implements ActionListener {
         panel.add(newRentalDateRentedDayinput);
 
         newRentalDateRentedMonthinput = new JTextField(2);
-        newRentalDateRentedMonthinput.setBounds((width/2) + 28, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateRentedMonthinput.setBounds((width/2) - 27, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         newRentalDateRentedMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateRentedMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
@@ -541,7 +550,7 @@ public class Main implements ActionListener {
         panel.add(newRentalDateDueYearinput);
 
         newRentalDateDueDayinput = new JTextField(2);
-        newRentalDateDueDayinput.setBounds((width/2) - 27, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateDueDayinput.setBounds((width/2) + 28, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         newRentalDateDueDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateDueDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
@@ -552,7 +561,7 @@ public class Main implements ActionListener {
         panel.add(newRentalDateDueDayinput);
 
         newRentalDateDueMonthinput = new JTextField(2);
-        newRentalDateDueMonthinput.setBounds((width/2) + 28, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateDueMonthinput.setBounds((width/2) - 27, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         newRentalDateDueMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateDueMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
@@ -710,11 +719,11 @@ public class Main implements ActionListener {
             newRental();
         }
         else if ((actionEvent.toString()).contains("cmd=Edit Selected Rental")) {
-            tempRental.setRentalID((Integer) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 0));
-            tempRental.setCustomerID((Integer) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 1));
-            tempRental.setMovieID((Integer) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 2));
-            tempRental.setDateRented((java.sql.Date) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 3));
-            tempRental.setDateDue((java.sql.Date) model.getValueAt(Display.getRowSorter().convertRowIndexToModel(Display.getSelectedRow()), 4));
+            tempRental.setRentalID((Integer) model.getValueAt(table.getRowSorter().convertRowIndexToModel(table.getSelectedRow()), 0));
+            tempRental.setCustomerID((Integer) model.getValueAt(table.getRowSorter().convertRowIndexToModel(table.getSelectedRow()), 1));
+            tempRental.setMovieID((Integer) model.getValueAt(table.getRowSorter().convertRowIndexToModel(table.getSelectedRow()), 2));
+            tempRental.setDateRented((java.sql.Date) model.getValueAt(table.getRowSorter().convertRowIndexToModel(table.getSelectedRow()), 3));
+            tempRental.setDateDue((java.sql.Date) model.getValueAt(table.getRowSorter().convertRowIndexToModel(table.getSelectedRow()), 4));
             editRentals();
         }
         else if ((actionEvent.toString()).contains("cmd=Delete Selected Rental")) {
@@ -861,13 +870,8 @@ public class Main implements ActionListener {
         else if ((actionEvent.toString()).contains("cmd=Update Rental")) {
             databaseOverwrite();
 
-            java.sql.Date tempDateRented = null;
-            tempDateRented.valueOf(""+newRentalDateRentedYearinput.getText()+"-"+newRentalDateRentedMonthinput.getText()+"-"+newRentalDateRentedDayinput.getText()+"");
-
-            System.out.println(newRentalDateRentedYearinput.getText()+"-"+newRentalDateRentedMonthinput.getText()+"-"+newRentalDateRentedDayinput.getText());
-
-            java.sql.Date tempDateDue = null;
-            tempDateDue.valueOf(""+newRentalDateDueYearinput.getText()+"-"+newRentalDateDueMonthinput.getText()+"-"+newRentalDateDueDayinput.getText()+"");
+            java.sql.Date tempDateRented = java.sql.Date.valueOf(""+newRentalDateRentedYearinput.getText()+"-"+newRentalDateRentedMonthinput.getText()+"-"+newRentalDateRentedDayinput.getText()+"");
+            java.sql.Date tempDateDue = java.sql.Date.valueOf(""+newRentalDateDueYearinput.getText()+"-"+newRentalDateDueMonthinput.getText()+"-"+newRentalDateDueDayinput.getText()+"");
 
             // Open a connection
             try(Connection conn = DriverManager.getConnection(ConnectionURL);
@@ -877,14 +881,17 @@ public class Main implements ActionListener {
                         "RentalID = "+newRentalRentalIDinput.getText()+", " +
                         "CustomerID = "+newRentalCustomerIDinput.getText()+", " +
                         "MovieID = "+newRentalMovieIDinput.getText()+", " +
-                        "DateRented = "+tempDateRented+", " +
-                        "DateDue = "+tempDateDue+" WHERE RentalID = "+tempRental.getRentalID());
+                        "DateRented = \'"+tempDateRented+"\', " +
+                        "DateDue = \'"+tempDateDue+"\' " +
+                        "WHERE RentalID = "+tempRental.getRentalID());
             }
             catch (SQLException e) {
                 e.printStackTrace();
             }
 
             databaseDownload();
+            table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
+            table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
             editRentals();
         }
         else if ((actionEvent.toString()).contains("cmd=Apply")) {
@@ -896,9 +903,9 @@ public class Main implements ActionListener {
                 UIManager.put(Type+".font", new FontUIResource(textfields.getFont(), Font.BOLD, textfields.fontSize));
             }
             else if (Type == "Table") {
-                Display.setFont(new FontUIResource(tables.getFont(), Font.PLAIN, tables.getFontSize()));
-                Display.setRowHeight(tables.getFontSize());
-                Display.getTableHeader().setFont(new Font(tables.getFont(), Font.BOLD, tables.getFontSize()));
+                table.setFont(new FontUIResource(tables.getFont(), Font.PLAIN, tables.getFontSize()));
+                table.setRowHeight(tables.getFontSize());
+                table.getTableHeader().setFont(new Font(tables.getFont(), Font.BOLD, tables.getFontSize()));
             }
             FontEdit();
         }
@@ -920,9 +927,9 @@ public class Main implements ActionListener {
             else if (Type == "Table") {
                 tables.setFont("SANS_SERIF");
                 tables.setFontSize(12);
-                Display.setFont(new FontUIResource(tables.getFont(), Font.PLAIN, tables.getFontSize()));
-                Display.setRowHeight(tables.getFontSize());
-                Display.getTableHeader().setFont(new Font(tables.getFont(), Font.BOLD, tables.getFontSize()));
+                table.setFont(new FontUIResource(tables.getFont(), Font.PLAIN, tables.getFontSize()));
+                table.setRowHeight(tables.getFontSize());
+                table.getTableHeader().setFont(new Font(tables.getFont(), Font.BOLD, tables.getFontSize()));
             }
             FontEdit();
         }
@@ -938,36 +945,41 @@ public class Main implements ActionListener {
             UIManager.put("Button.font", new FontUIResource(buttons.getFont(), Font.BOLD, buttons.fontSize));
             UIManager.put("Label.font", new FontUIResource(labels.getFont(), Font.BOLD, labels.fontSize));
             UIManager.put("TextField.font", new FontUIResource(textfields.getFont(), Font.BOLD, textfields.fontSize));
-            Display.setFont(new FontUIResource(tables.getFont(), Font.PLAIN, tables.getFontSize()));
-            Display.setRowHeight(tables.getFontSize());
-            Display.getTableHeader().setFont(new Font(tables.getFont(), Font.BOLD, tables.getFontSize()));
+            table.setFont(new FontUIResource(tables.getFont(), Font.PLAIN, tables.getFontSize()));
+            table.setRowHeight(tables.getFontSize());
+            table.getTableHeader().setFont(new Font(tables.getFont(), Font.BOLD, tables.getFontSize()));
             FontEdit();
         }
         else if ((actionEvent.toString()).contains("cmd=Search")) {
             ArrayList<Rentals> TempSortList = new ArrayList<Rentals>();
             RentalsTableModel tempModel;
-            Display.setModel(model);
-            Display.repaint();
-            for(int i = 0; i < Display.getRowCount(); i++){//For each row
-                for(int j = 0; j < Display.getColumnCount(); j++){//For each column in that row
-                    if((Display.getValueAt(i, j)).toString().equals(searchBar.getText())){//Search the model
-                        Rentals tempRental = new Rentals((Integer) Display.getValueAt(i, 0), (Integer) Display.getValueAt(i, 1), (Integer) Display.getValueAt(i, 2), (Date) Display.getValueAt(i, 3), (Date) Display.getValueAt(i, 4));
+            table.setModel(model);
+            table.repaint();
+            for(int i = 0; i < table.getRowCount(); i++){//For each row
+                for(int j = 0; j < table.getColumnCount(); j++){//For each column in that row
+                    if((table.getValueAt(i, j)).toString().equals(searchBar.getText())){//Search the model
+                        Rentals tempRental = new Rentals((Integer) table.getValueAt(i, 0), (Integer) table.getValueAt(i, 1), (Integer) table.getValueAt(i, 2), (java.sql.Date) table.getValueAt(i, 3), (java.sql.Date) table.getValueAt(i, 4));
                         TempSortList.add(tempRental);
                     }
                 }
             }
             tempModel = new RentalsTableModel(TempSortList);
-            Display.setModel(tempModel);
-            Display.repaint();
+            table.setModel(tempModel);
+            table.repaint();
+            table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
+            table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
         }
         else if ((actionEvent.toString()).contains("cmd=Clear")) {
-            Display.setModel(model);
-            Display.repaint();
+            searchBar.setText("");
+            table.setModel(model);
+            table.repaint();
+            table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
+            table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
         }
         else if ((actionEvent.toString()).contains("cmd=Add Rental")) {
             Rentals newRental = new Rentals(Integer.parseInt(newRentalRentalIDinput.getText()), Integer.parseInt(newRentalCustomerIDinput.getText()), Integer.parseInt(newRentalMovieIDinput.getText()), new Date(Integer.parseInt(newRentalDateRentedYearinput.getText())-1900, Integer.parseInt(newRentalDateRentedMonthinput.getText())-1, Integer.parseInt(newRentalDateRentedDayinput.getText())), new Date(Integer.parseInt(newRentalDateDueYearinput.getText())-1900, Integer.parseInt(newRentalDateDueMonthinput.getText())-1, Integer.parseInt(newRentalDateDueDayinput.getText())));
             RentalList.add(newRental);
-            Display = new JTable(model = new RentalsTableModel(RentalList));
+            table = new JTable(model = new RentalsTableModel(RentalList));
             newRental();
         }
     }
