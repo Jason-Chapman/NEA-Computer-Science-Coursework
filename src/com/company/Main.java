@@ -5,9 +5,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,7 +67,7 @@ public class Main implements ActionListener {
     public static int AccessLevel;
     public static String ConnectionURL = "jdbc:sqlserver://movierentalserver.database.windows.net:1433;database=movieRentalDatabase;user=jc210762@movierentalserver;password={Cooper27};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
 
-    public static void databaseDownload() {
+    public static void cloudDatabaseDownload() {
         ResultSet rs;
         RentalList.clear();
 
@@ -108,7 +106,7 @@ public class Main implements ActionListener {
         table = new JTable(model = new RentalsTableModel(RentalList));
     }
 
-    public static void databaseOverwrite() {
+    public static void localDatabaseUpload() {
         // Open a connection
         try(Connection conn = DriverManager.getConnection(ConnectionURL);
             Statement stmt = conn.createStatement();
@@ -131,7 +129,7 @@ public class Main implements ActionListener {
     }
 
     public static TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
-        SimpleDateFormat f = new SimpleDateFormat("YYYY-MM-DD");
+        SimpleDateFormat f = new SimpleDateFormat("YYYY-MM-dd");
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value instanceof Date) {
                 value = f.format(value);
@@ -141,13 +139,19 @@ public class Main implements ActionListener {
     };
 
     public static void main(String[] args) {
-        databaseDownload();
+        cloudDatabaseDownload();
 
         frame.setSize(width, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         panel.setLayout(null);
         frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent windowEvent){
+                localDatabaseUpload();
+                System.exit(0);
+            }
+        });
 
         UIManager.put(Type + ".font", new FontUIResource("SANS_SERIF", Font.BOLD, 12));
         UIManager.put(Type + ".font", new FontUIResource("SANS_SERIF", Font.BOLD, 12));
@@ -298,12 +302,12 @@ public class Main implements ActionListener {
         panel.add(customerID);
 
         JLabel dateRented;
-        dateRented = new JLabel("(YYYY-DD-MM) Date Rented:", SwingConstants.CENTER);
+        dateRented = new JLabel("(YYYY-MM-DD) Date Rented:", SwingConstants.CENTER);
         dateRented.setBounds((width/2) - 82, (height/2) -50, 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(dateRented);
 
         JLabel dateDue;
-        dateDue = new JLabel("(YYYY-DD-MM) Date Due:", SwingConstants.CENTER);
+        dateDue = new JLabel("(YYYY-MM-DD) Date Due:", SwingConstants.CENTER);
         dateDue.setBounds((width/2) - 82, (height/2), 165, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         panel.add(dateDue);
 
@@ -351,19 +355,8 @@ public class Main implements ActionListener {
         });
         panel.add(newRentalDateRentedYearinput);
 
-        newRentalDateRentedDayinput = new JTextField(2);
-        newRentalDateRentedDayinput.setBounds((width/2) - 27, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        newRentalDateRentedDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                if(newRentalDateRentedDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
-                }
-            }
-        });
-        panel.add(newRentalDateRentedDayinput);
-
         newRentalDateRentedMonthinput = new JTextField(2);
-        newRentalDateRentedMonthinput.setBounds((width/2) + 28, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateRentedMonthinput.setBounds((width/2) - 27, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         newRentalDateRentedMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateRentedMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
@@ -372,6 +365,17 @@ public class Main implements ActionListener {
             }
         });
         panel.add(newRentalDateRentedMonthinput);
+
+        newRentalDateRentedDayinput = new JTextField(2);
+        newRentalDateRentedDayinput.setBounds((width/2) + 28, (height/2)-25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateRentedDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateRentedDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateRentedDayinput);
 
         newRentalDateDueYearinput = new JTextField(4);
         newRentalDateDueYearinput.setBounds((width/2) - 82, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
@@ -384,19 +388,8 @@ public class Main implements ActionListener {
         });
         panel.add(newRentalDateDueYearinput);
 
-        newRentalDateDueDayinput = new JTextField(2);
-        newRentalDateDueDayinput.setBounds((width/2) - 27, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        newRentalDateDueDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                if(newRentalDateDueDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
-                }
-            }
-        });
-        panel.add(newRentalDateDueDayinput);
-
         newRentalDateDueMonthinput = new JTextField(2);
-        newRentalDateDueMonthinput.setBounds((width/2) + 28, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateDueMonthinput.setBounds((width/2) - 27, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         newRentalDateDueMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateDueMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
@@ -405,6 +398,17 @@ public class Main implements ActionListener {
             }
         });
         panel.add(newRentalDateDueMonthinput);
+
+        newRentalDateDueDayinput = new JTextField(2);
+        newRentalDateDueDayinput.setBounds((width/2) + 28, (height/2) + 25, 55, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        newRentalDateDueDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if(newRentalDateDueDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
+                    evt.consume();
+                }
+            }
+        });
+        panel.add(newRentalDateDueDayinput);
 
         AddRental = new JButton("Add Rental");
         AddRental.setBounds((width/2) - 100, (height/2) + 125, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
@@ -868,7 +872,7 @@ public class Main implements ActionListener {
             }
         }
         else if ((actionEvent.toString()).contains("cmd=Update Rental")) {
-            databaseOverwrite();
+            localDatabaseUpload();
 
             java.sql.Date tempDateRented = java.sql.Date.valueOf(""+newRentalDateRentedYearinput.getText()+"-"+newRentalDateRentedMonthinput.getText()+"-"+newRentalDateRentedDayinput.getText()+"");
             java.sql.Date tempDateDue = java.sql.Date.valueOf(""+newRentalDateDueYearinput.getText()+"-"+newRentalDateDueMonthinput.getText()+"-"+newRentalDateDueDayinput.getText()+"");
@@ -889,7 +893,7 @@ public class Main implements ActionListener {
                 e.printStackTrace();
             }
 
-            databaseDownload();
+            cloudDatabaseDownload();
             table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
             table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
             editRentals();
@@ -980,6 +984,8 @@ public class Main implements ActionListener {
             Rentals newRental = new Rentals(Integer.parseInt(newRentalRentalIDinput.getText()), Integer.parseInt(newRentalCustomerIDinput.getText()), Integer.parseInt(newRentalMovieIDinput.getText()), new Date(Integer.parseInt(newRentalDateRentedYearinput.getText())-1900, Integer.parseInt(newRentalDateRentedMonthinput.getText())-1, Integer.parseInt(newRentalDateRentedDayinput.getText())), new Date(Integer.parseInt(newRentalDateDueYearinput.getText())-1900, Integer.parseInt(newRentalDateDueMonthinput.getText())-1, Integer.parseInt(newRentalDateDueDayinput.getText())));
             RentalList.add(newRental);
             table = new JTable(model = new RentalsTableModel(RentalList));
+            table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
+            table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
             newRental();
         }
     }
