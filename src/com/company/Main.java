@@ -36,6 +36,7 @@ public class Main implements ActionListener {
     public static JButton SERIF;
     public static JButton MONOSPACED;
     public static JButton AddRental;
+    public static JButton DeleteRental;
     public static JSlider fontSize;
     public static ArrayList<Rentals> RentalList = new ArrayList<Rentals>();
     public static ArrayList<String> Columns = new ArrayList<String>();
@@ -50,6 +51,7 @@ public class Main implements ActionListener {
     public static JTextField newRentalDateDueYearinput;
     public static JTextField newRentalDateDueMonthinput;
     public static JTextField newRentalDateDueDayinput;
+    public static JTextField rentalIDinput;
     private TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(table.getModel());
 
     public static Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
@@ -591,13 +593,38 @@ public class Main implements ActionListener {
     public static void deleteRental() {
         panel.removeAll();
 
-        JLabel welcomeLabel;
-        welcomeLabel = new JLabel("Welcome to the Deleting Section!", SwingConstants.CENTER);
-        welcomeLabel.setBounds(0, (height/2) - 200, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
-        panel.add(welcomeLabel);
+        JLabel tempRentalID;
+        tempRentalID = new JLabel("RentalID: "+tempRental.getRentalID(), SwingConstants.CENTER);
+        tempRentalID.setBounds(0, (height/2) - 175, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(tempRentalID);
+
+        JLabel tempCustomerID;
+        tempCustomerID = new JLabel("CustomerID: "+tempRental.getCustomerID(), SwingConstants.CENTER);
+        tempCustomerID.setBounds(0, (height/2) - 125, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(tempCustomerID);
+
+        JLabel tempMovieID;
+        tempMovieID = new JLabel("MovieID: "+tempRental.getMovieID(), SwingConstants.CENTER);
+        tempMovieID.setBounds(0, (height/2) - 75, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(tempMovieID);
+
+        JLabel tempDateRented;
+        tempDateRented = new JLabel("(YYYY-MM-DD) Date Rented: "+tempRental.getDateRented(), SwingConstants.CENTER);
+        tempDateRented.setBounds(0, (height/2) - 25, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(tempDateRented);
+
+        JLabel tempDateDue;
+        tempDateDue = new JLabel("(YYYY-MM-DD) Date Due: "+tempRental.getDateDue(), SwingConstants.CENTER);
+        tempDateDue.setBounds(0, (height/2) + 25, width, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        panel.add(tempDateDue);
+
+        DeleteRental = new JButton("Delete Rental");
+        DeleteRental.setBounds((width/2) - 100, (height/2) + 75, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        DeleteRental.addActionListener(new Main());
+        panel.add(DeleteRental);
 
         ReturnToMenu = new JButton("Return to Main Menu");
-        ReturnToMenu.setBounds((width/2) - 100, (height/2) - 150, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
+        ReturnToMenu.setBounds((width/2) - 100, (height/2) + 100, 200, 25); //(X-POS, Y-POS, WIDTH, HEIGHT)
         ReturnToMenu.addActionListener(new Main());
         panel.add(ReturnToMenu);
 
@@ -731,6 +758,11 @@ public class Main implements ActionListener {
             editRentals();
         }
         else if ((actionEvent.toString()).contains("cmd=Delete Selected Rental")) {
+            tempRental.setRentalID((Integer) model.getValueAt(table.getRowSorter().convertRowIndexToModel(table.getSelectedRow()), 0));
+            tempRental.setCustomerID((Integer) model.getValueAt(table.getRowSorter().convertRowIndexToModel(table.getSelectedRow()), 1));
+            tempRental.setMovieID((Integer) model.getValueAt(table.getRowSorter().convertRowIndexToModel(table.getSelectedRow()), 2));
+            tempRental.setDateRented((java.sql.Date) model.getValueAt(table.getRowSorter().convertRowIndexToModel(table.getSelectedRow()), 3));
+            tempRental.setDateDue((java.sql.Date) model.getValueAt(table.getRowSorter().convertRowIndexToModel(table.getSelectedRow()), 4));
             deleteRental();
         }
         else if ((actionEvent.toString()).contains("cmd=Return to Main Menu")) {
@@ -872,32 +904,58 @@ public class Main implements ActionListener {
             }
         }
         else if ((actionEvent.toString()).contains("cmd=Update Rental")) {
-            localDatabaseUpload();
+            int input = JOptionPane.showConfirmDialog(null, "Do you want to update this rental with these values?", "Confirm",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+            if (input == 0) {
+                localDatabaseUpload();
 
-            java.sql.Date tempDateRented = java.sql.Date.valueOf(""+newRentalDateRentedYearinput.getText()+"-"+newRentalDateRentedMonthinput.getText()+"-"+newRentalDateRentedDayinput.getText()+"");
-            java.sql.Date tempDateDue = java.sql.Date.valueOf(""+newRentalDateDueYearinput.getText()+"-"+newRentalDateDueMonthinput.getText()+"-"+newRentalDateDueDayinput.getText()+"");
+                java.sql.Date tempDateRented = java.sql.Date.valueOf("" + newRentalDateRentedYearinput.getText() + "-" + newRentalDateRentedMonthinput.getText() + "-" + newRentalDateRentedDayinput.getText() + "");
+                java.sql.Date tempDateDue = java.sql.Date.valueOf("" + newRentalDateDueYearinput.getText() + "-" + newRentalDateDueMonthinput.getText() + "-" + newRentalDateDueDayinput.getText() + "");
 
-            // Open a connection
-            try(Connection conn = DriverManager.getConnection(ConnectionURL);
-                Statement stmt = conn.createStatement();
-            ) {
-                stmt.executeUpdate("UPDATE [dbo].[Rentals] SET " +
-                        "RentalID = "+newRentalRentalIDinput.getText()+", " +
-                        "CustomerID = "+newRentalCustomerIDinput.getText()+", " +
-                        "MovieID = "+newRentalMovieIDinput.getText()+", " +
-                        "DateRented = \'"+tempDateRented+"\', " +
-                        "DateDue = \'"+tempDateDue+"\' " +
-                        "WHERE RentalID = "+tempRental.getRentalID());
+                // Open a connection
+                try (Connection conn = DriverManager.getConnection(ConnectionURL);
+                     Statement stmt = conn.createStatement();
+                ) {
+                    stmt.executeUpdate("UPDATE [dbo].[Rentals] SET " +
+                            "RentalID = " + newRentalRentalIDinput.getText() + ", " +
+                            "CustomerID = " + newRentalCustomerIDinput.getText() + ", " +
+                            "MovieID = " + newRentalMovieIDinput.getText() + ", " +
+                            "DateRented = \'" + tempDateRented + "\', " +
+                            "DateDue = \'" + tempDateDue + "\' " +
+                            "WHERE RentalID = " + tempRental.getRentalID());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                cloudDatabaseDownload();
+                table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
+                table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
+                editRentals();
             }
-            catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            cloudDatabaseDownload();
-            table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
-            table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
-            editRentals();
         }
+
+        else if ((actionEvent.toString()).contains("cmd=Delete Rental")) {
+            int input = JOptionPane.showConfirmDialog(null, "Do you want to delete this rental?", "Confirm",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+            if (input == 0) {
+                localDatabaseUpload();
+
+                // Open a connection
+                try(Connection conn = DriverManager.getConnection(ConnectionURL);
+                    Statement stmt = conn.createStatement();
+                ) {
+                    stmt.executeUpdate("DELETE FROM [dbo].[Rentals] WHERE RentalID="+rentalIDinput.getText());
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                cloudDatabaseDownload();
+                table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
+                table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
+                deleteRental();
+            }
+        }
+
         else if ((actionEvent.toString()).contains("cmd=Apply")) {
             if (Type == "Label") {
                 UIManager.put(Type+".font", new FontUIResource(labels.getFont(), Font.BOLD, labels.fontSize));
@@ -981,12 +1039,16 @@ public class Main implements ActionListener {
             table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
         }
         else if ((actionEvent.toString()).contains("cmd=Add Rental")) {
-            Rentals newRental = new Rentals(Integer.parseInt(newRentalRentalIDinput.getText()), Integer.parseInt(newRentalCustomerIDinput.getText()), Integer.parseInt(newRentalMovieIDinput.getText()), new Date(Integer.parseInt(newRentalDateRentedYearinput.getText())-1900, Integer.parseInt(newRentalDateRentedMonthinput.getText())-1, Integer.parseInt(newRentalDateRentedDayinput.getText())), new Date(Integer.parseInt(newRentalDateDueYearinput.getText())-1900, Integer.parseInt(newRentalDateDueMonthinput.getText())-1, Integer.parseInt(newRentalDateDueDayinput.getText())));
-            RentalList.add(newRental);
-            table = new JTable(model = new RentalsTableModel(RentalList));
-            table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
-            table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
-            newRental();
+            int input = JOptionPane.showConfirmDialog(null, "Do you want to add this rental?", "Confirm",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+            if (input == 0) {
+                Rentals newRental = new Rentals(Integer.parseInt(newRentalRentalIDinput.getText()), Integer.parseInt(newRentalCustomerIDinput.getText()), Integer.parseInt(newRentalMovieIDinput.getText()), new Date(Integer.parseInt(newRentalDateRentedYearinput.getText()) - 1900, Integer.parseInt(newRentalDateRentedMonthinput.getText()) - 1, Integer.parseInt(newRentalDateRentedDayinput.getText())), new Date(Integer.parseInt(newRentalDateDueYearinput.getText()) - 1900, Integer.parseInt(newRentalDateDueMonthinput.getText()) - 1, Integer.parseInt(newRentalDateDueDayinput.getText())));
+                RentalList.add(newRental);
+                table = new JTable(model = new RentalsTableModel(RentalList));
+                table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
+                table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
+                newRental();
+            }
         }
     }
 }
