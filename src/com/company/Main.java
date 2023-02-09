@@ -1,11 +1,17 @@
 package com.company;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.*;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,6 +74,44 @@ public class Main implements ActionListener {
     public static String Password;
     public static int AccessLevel;
     public static String ConnectionURL = "jdbc:sqlserver://movierentalserver.database.windows.net:1433;database=movieRentalDatabase;user=jc210762@movierentalserver;password={Cooper27};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+    public static String databasePasswordHashed;
+    public static String userInputPasswordHashed;
+
+    private static String generateStrongPasswordHash(String password)
+            throws NoSuchAlgorithmException, InvalidKeySpecException
+    {
+        int iterations = 1000;
+        char[] chars = password.toCharArray();
+        byte[] salt = getSalt();
+
+        PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, 64 * 8);
+        SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+
+        byte[] hash = skf.generateSecret(spec).getEncoded();
+        return iterations + ":" + toHex(salt) + ":" + toHex(hash);
+    }
+
+    private static byte[] getSalt() throws NoSuchAlgorithmException
+    {
+        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
+        byte[] salt = new byte[16];
+        sr.nextBytes(salt);
+        return salt;
+    }
+
+    private static String toHex(byte[] array) throws NoSuchAlgorithmException
+    {
+        BigInteger bi = new BigInteger(1, array);
+        String hex = bi.toString(16);
+
+        int paddingLength = (array.length * 2) - hex.length();
+        if(paddingLength > 0)
+        {
+            return String.format("%0"  +paddingLength + "d", 0) + hex;
+        }else{
+            return hex;
+        }
+    }
 
     public static void cloudDatabaseDownload() {
         ResultSet rs;
@@ -738,8 +782,23 @@ public class Main implements ActionListener {
     public void actionPerformed(ActionEvent actionEvent) {
         if ((actionEvent.toString()).contains("cmd=Login")) {
             String username = (usernameText.getText()).toLowerCase(); //REMOVES CAPS SENSITIVITY FROM USERNAME
-            String password = passwordText.getText();
-            if (username.equals(Username) && password.equals(Password)) { //REPLACE "username" & "Password" WITH VARIABLES FROM DATABASE IN FUTURE
+            try {
+                databasePasswordHashed = generateStrongPasswordHash(Password);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
+            try {
+                userInputPasswordHashed = generateStrongPasswordHash(passwordText.getText());
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
+            System.out.println(Password + "\n" + passwordText.getText());
+            System.out.println(databasePasswordHashed + "\n" + userInputPasswordHashed);
+            if (username.equals(Username) && userInputPasswordHashed.equals(databasePasswordHashed)) { //REPLACE "username" & "Password" WITH VARIABLES FROM DATABASE IN FUTURE
                 mainMenu();
             }
             else {
