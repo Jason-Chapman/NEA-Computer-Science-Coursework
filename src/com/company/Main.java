@@ -27,7 +27,6 @@ public class Main implements ActionListener {
     public static JFrame frame = new JFrame();
     public static Random random = new Random();
 
-
     public static Rentals tempRental = new Rentals(0, 0, 0, null, null);
     public static JTextField searchBar;
     public static JTextField usernameText;
@@ -157,13 +156,13 @@ public class Main implements ActionListener {
         ) {
             rs = stmt.executeQuery("SELECT Username, Password, AccessLevel FROM [dbo].[tblEmployees]");
 
-            while (rs.next()) {
+            while (rs.next()) { // STORES EMPLOYEE DETAILS LOCALLY
                 Username = rs.getString(1);
                 Password = rs.getString(2);
                 AccessLevel = rs.getInt(3);
             }
 
-            rs = stmt.executeQuery("SELECT * FROM [dbo].[Rentals]");
+            rs = stmt.executeQuery("SELECT * FROM [dbo].[Rentals]"); // STORES ALL DATABASE RENTALS LOCALLY
             while (rs.next()) {
                 Rentals rental = new Rentals(0, 0, 0, null, null);
                 rental.setRentalID(rs.getInt(1));
@@ -174,7 +173,7 @@ public class Main implements ActionListener {
                 RentalList.add(rental);
             }
 
-            rs = stmt.executeQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'Rentals'");
+            rs = stmt.executeQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'Rentals'"); // ADDS COLUMNS TO DISPLAY TABLE BASED ON RENTAL DATABASE RENTAL ATTRIBUTES
             while (rs.next()) {
                 Columns.add(rs.getString(1));
             }
@@ -183,7 +182,7 @@ public class Main implements ActionListener {
             e.printStackTrace();
         }
 
-        table = new JTable(model = new RentalsTableModel(RentalList));
+        table = new JTable(model = new RentalsTableModel(RentalList)); // INSERTS DATA AND FORMAT INTO THE TABLE
     }
 
     public static void localDatabaseUpload() {
@@ -191,9 +190,9 @@ public class Main implements ActionListener {
         try(Connection conn = DriverManager.getConnection(ConnectionURL);
             Statement stmt = conn.createStatement();
         ) {
-            stmt.executeUpdate("TRUNCATE TABLE [dbo].[Rentals]");
+            stmt.executeUpdate("TRUNCATE TABLE [dbo].[Rentals]"); // EMPTIES DATABASE
 
-            for (int i = 0; i < RentalList.size(); i++) {
+            for (int i = 0; i < RentalList.size(); i++) { // UPLOADS ALL LOCAL RENTALS ONTO THE DATABASE
                 int a = RentalList.get(i).getRentalID();
                 int b = RentalList.get(i).getCustomerID();
                 int c = RentalList.get(i).getMovieID();
@@ -208,7 +207,7 @@ public class Main implements ActionListener {
         }
     }
 
-    public static TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
+    public static TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() { // FORMATS THE DATE DISPLAYED TO MATCH DATABASE FORMAT
         SimpleDateFormat f = new SimpleDateFormat("YYYY-MM-dd");
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value instanceof Date) {
@@ -228,7 +227,7 @@ public class Main implements ActionListener {
         frame.setVisible(true);
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent){
-                localDatabaseUpload();
+                localDatabaseUpload(); // UPLOADS DATABASE WHENEVER APP IS CLOSED
                 System.exit(0);
             }
         });
@@ -308,38 +307,6 @@ public class Main implements ActionListener {
         table.setRowSorter(rowSorter);
         panel.add(scrollPane);
 
-//
-//        searchBar.getDocument().addDocumentListener(new DocumentListener(){
-//
-//            @Override
-//            public void insertUpdate(DocumentEvent e) {
-//                String text = searchBar.getText();
-//
-//                if (text.trim().length() == 0) {
-//                    rowSorter.setRojc201wFilter(null);
-//                } else {
-//                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-//                }
-//            }
-//
-//            @Override
-//            public void removeUpdate(DocumentEvent e) {
-//                String text = searchBar.getText();
-//
-//                if (text.trim().length() == 0) {
-//                    rowSorter.setRowFilter(null);
-//                } else {
-//                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-//                }
-//            }
-//
-//            @Override
-//            public void changedUpdate(DocumentEvent e) {
-//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//            }
-//
-//        });
-
         NewRental = new JButton("Create New Rental");
         NewRental.setBounds(0, 0, width/4, 50); //(X-POS, Y-POS, WIDTH, HEIGHT)
         NewRental.addActionListener(new Main());
@@ -396,7 +363,7 @@ public class Main implements ActionListener {
         newRentalRentalIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalRentalIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -407,7 +374,7 @@ public class Main implements ActionListener {
         newRentalMovieIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalMovieIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -418,7 +385,7 @@ public class Main implements ActionListener {
         newRentalCustomerIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalCustomerIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -429,7 +396,7 @@ public class Main implements ActionListener {
         newRentalDateRentedYearinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateRentedYearinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -440,7 +407,7 @@ public class Main implements ActionListener {
         newRentalDateRentedMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateRentedMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -451,7 +418,7 @@ public class Main implements ActionListener {
         newRentalDateRentedDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateRentedDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -462,7 +429,7 @@ public class Main implements ActionListener {
         newRentalDateDueYearinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateDueYearinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -473,7 +440,7 @@ public class Main implements ActionListener {
         newRentalDateDueMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateDueMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -484,7 +451,7 @@ public class Main implements ActionListener {
         newRentalDateDueDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateDueDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -561,7 +528,7 @@ public class Main implements ActionListener {
         newRentalRentalIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalRentalIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -572,7 +539,7 @@ public class Main implements ActionListener {
         newRentalMovieIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalMovieIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -583,7 +550,7 @@ public class Main implements ActionListener {
         newRentalCustomerIDinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalCustomerIDinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -594,7 +561,7 @@ public class Main implements ActionListener {
         newRentalDateRentedYearinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateRentedYearinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -605,7 +572,7 @@ public class Main implements ActionListener {
         newRentalDateRentedDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateRentedDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -616,7 +583,7 @@ public class Main implements ActionListener {
         newRentalDateRentedMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateRentedMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -627,7 +594,7 @@ public class Main implements ActionListener {
         newRentalDateDueYearinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateDueYearinput.getText().length()>=4&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -638,7 +605,7 @@ public class Main implements ActionListener {
         newRentalDateDueDayinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateDueDayinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -649,7 +616,7 @@ public class Main implements ActionListener {
         newRentalDateDueMonthinput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 if(newRentalDateDueMonthinput.getText().length()>=2&&!(evt.getKeyChar()== KeyEvent.VK_DELETE||evt.getKeyChar()==KeyEvent.VK_BACK_SPACE)) {
-                    evt.consume();
+                    evt.consume(); // SETS A CHARACTER LIMIT FOR THE TEXTFIELD
                 }
             }
         });
@@ -1012,13 +979,13 @@ public class Main implements ActionListener {
                             "MovieID = " + newRentalMovieIDinput.getText() + ", " +
                             "DateRented = \'" + tempDateRented + "\', " +
                             "DateDue = \'" + tempDateDue + "\' " +
-                            "WHERE RentalID = " + tempRental.getRentalID());
+                            "WHERE RentalID = " + tempRental.getRentalID()); // CHANGES SPECIFIC RENTAL ATTRIBUTES IN DATABASE
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
                 cloudDatabaseDownload();
                 table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
-                table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
+                table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer); // DISPLAYS NEW DATA IN TABLE
                 editRentals();
             }
         }
@@ -1033,7 +1000,7 @@ public class Main implements ActionListener {
                 try(Connection conn = DriverManager.getConnection(ConnectionURL);
                     Statement stmt = conn.createStatement();
                 ) {
-                    stmt.executeUpdate("DELETE FROM [dbo].[Rentals] WHERE RentalID="+rentalIDinput.getText());
+                    stmt.executeUpdate("DELETE FROM [dbo].[Rentals] WHERE RentalID="+rentalIDinput.getText()); // USES UNIQUE RENTALID TO DELETE SPECIFIC RENTAL
                 }
                 catch (SQLException e) {
                     e.printStackTrace();
@@ -1041,7 +1008,7 @@ public class Main implements ActionListener {
 
                 cloudDatabaseDownload();
                 table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
-                table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
+                table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer); // DISPLAYS NEW DATA IN TABLE
                 deleteRental();
             }
         }
@@ -1119,14 +1086,14 @@ public class Main implements ActionListener {
             table.setModel(tempModel);
             table.repaint();
             table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
-            table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
+            table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer); // DISPLAYS NEW DATA IN TABLE
         }
         else if ((actionEvent.toString()).contains("cmd=Clear")) {
             searchBar.setText("");
             table.setModel(model);
             table.repaint();
             table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
-            table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
+            table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer); // DISPLAYS NEW DATA IN TABLE
         }
         else if ((actionEvent.toString()).contains("cmd=Add Rental")) {
             int input = JOptionPane.showConfirmDialog(null, "Do you want to add this rental?", "Confirm",
@@ -1136,54 +1103,9 @@ public class Main implements ActionListener {
                 RentalList.add(newRental);
                 table = new JTable(model = new RentalsTableModel(RentalList));
                 table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
-                table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer);
+                table.getColumnModel().getColumn(4).setCellRenderer(tableCellRenderer); // DISPLAYS NEW DATA IN TABLE
                 newRental();
             }
         }
     }
 }
-//            GENERATES RECORDS FOR RENTAL TABLE IN DATABASE
-//======================================================================================================================================================================================
-//            int RentalID = 999;
-//            int CustomerID, MovieID;
-//            int Yrented, Mrented, Drented, Ydue, Mdue, Ddue;
-//            for (int i = 1; i < 51; i++) {
-//                Yrented = random.nextInt(2)+2022;
-//                Mrented = random.nextInt(12-1)+1;
-//                Drented = random.nextInt(28-1)+1;
-//                Ydue = random.nextInt(2)+2022;
-//                Mdue = random.nextInt(12-1)+1;
-//                Ddue = random.nextInt(28-1)+1;
-//                while (Ydue < Yrented) {
-//                    Yrented = random.nextInt(2023-2022)+2022;
-//                    Ydue = random.nextInt(2023-2022)+2022;
-//                }
-//                while (Ydue == Yrented && Mdue < Mrented) {
-//                    Mrented = random.nextInt(12-1)+1;
-//                    Mdue = random.nextInt(12-1)+1;
-//                }
-//                while (Ydue == Yrented && Mdue == Mrented && Ddue < Drented) {
-//                    Drented = random.nextInt(28-1)+1;
-//                    Ddue = random.nextInt(28-1)+1;
-//                }
-//
-//                RentalID++;
-//                CustomerID = random.nextInt(1049-1000)+1000;
-//                MovieID = random.nextInt(1049-1001)+1001;
-//                stmt.execute("INSERT INTO [dbo].[Rentals] VALUES ("+RentalID+", "+CustomerID+", "+MovieID+", '"+Yrented+"-"+Mrented+"-"+Drented+"', '"+Ydue+"-"+Mdue+"-"+Ddue+"')");
-//            }
-//======================================================================================================================================================================================
-
-
-//            GENERATES RECORDS FOR CUSTOMER TABLE IN DATABASE
-//==========================================================================================================================================================
-//            String PhoneNumber;
-//            int CustomerID = 999;
-//            String Name;
-//            for (int i = 1; i < 51; i++) {
-//                PhoneNumber = ""+Integer.toString(random.nextInt(99999 - 10000)+10000)+" "+Integer.toString(random.nextInt(999999 - 100000)+100000)+"";
-//                CustomerID++;
-//                Name = "CustomerName"+i+"".toString();
-//                stmt.execute("INSERT INTO [dbo].[tblCustomers] VALUES ("+CustomerID+", '"+Name+"', '"+PhoneNumber+"')");
-//            }
-//==========================================================================================================================================================
