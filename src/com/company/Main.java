@@ -75,7 +75,6 @@ public class Main implements ActionListener {
     public static int AccessLevel;
     public static String ConnectionURL = "jdbc:sqlserver://movierentalserver.database.windows.net:1433;database=movieRentalDatabase;user=jc210762@movierentalserver;password={Cooper27};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
     public static String databasePasswordHashed;
-    public static String userInputPasswordHashed;
 
     //////////////////////////////////////////////////////////////////
     // HASHING ALGORITHM AND COMPARISON COURTESY OF https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
@@ -824,11 +823,8 @@ public class Main implements ActionListener {
             } catch (InvalidKeySpecException e) {
                 e.printStackTrace();
             }
-
-            System.out.println(Password + "\n" + passwordText.getText());
-            System.out.println(databasePasswordHashed + "\n" + userInputPasswordHashed);
             try {
-                if (validatePassword(passwordText.getText(), databasePasswordHashed) == true) {
+                if (username.equals(Username) && validatePassword(passwordText.getText(), databasePasswordHashed) == true) {
                     mainMenu();
                 }
                 else {
